@@ -1,0 +1,58 @@
+server:
+  port: 5000
+
+spring:
+  application:
+    name: GATEWAY-SERVER
+
+  cloud:
+    gateway:
+      routes:
+        - id: USER-SERVICE
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/auth/**, /users/**, /api/users/**, /
+        - id: COMPANY-SERVICE
+          uri: lb://COMPANY-SERVICE
+          predicates:
+            - Path=/api/companies/**, /companies/**
+        - id: JOB-SERVICE
+          uri: lb://JOB-SERVICE
+          predicates:
+            - Path=/api/jobs/**, /jobs/**
+        - id: APPLICANT-SERVICE
+          uri: lb://APPLICANT-SERVICE
+          predicates:
+            - Path=/api/applicants/**, /applicants/**
+        - id: JOB-APPLICATION-SERVICE
+          uri: lb://JOB-APPLICATION-SERVICE
+          predicates:
+            - Path=/api/job-applications/**, /job-applications/**
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://eureka-server:8070/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

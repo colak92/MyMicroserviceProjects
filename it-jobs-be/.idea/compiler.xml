@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="eureka-server (1) (com.it-jobs)" />
+        <module name="gateway-server" />
+        <module name="eureka-server" />
+      </profile>
+      <profile name="Annotation profile for It Jobs Backend" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.28/lombok-1.18.28.jar" />
+        </processorPath>
+        <module name="job-application-service" />
+        <module name="job-service" />
+        <module name="auth-api" />
+        <module name="company-service" />
+        <module name="user-service" />
+        <module name="applicant-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="task-service" target="17" />
+      <module name="task-submission-service" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="applicant-service" options="-parameters" />
+      <module name="company-service" options="-parameters" />
+      <module name="eureka-server" options="" />
+      <module name="eureka-server (1) (com.it-jobs)" options="-parameters" />
+      <module name="gateway-server" options="" />
+      <module name="job-application-service" options="-parameters" />
+      <module name="job-service" options="-parameters" />
+      <module name="task-service" options="-parameters" />
+      <module name="task-submission-service" options="-parameters" />
+      <module name="user-service" options="" />
+    </option>
+  </component>
+</project>
