@@ -1,11 +1,13 @@
 package com.techjobs.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,11 +42,10 @@ public class Company {
 
     private LocalDate foundedDate;
 
-    @ElementCollection
-    private List<String> founders = new ArrayList<>();
-
-    @ElementCollection
-    private List<String> jobs = new ArrayList<>();
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonManagedReference
+    private List<Founder> founders = new ArrayList<>();
 
     @Min(0)
     @Max(5)

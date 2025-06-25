@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Button,
   Grid,
@@ -7,19 +7,19 @@ import {
   Modal,
   Typography,
   CircularProgress,
-} from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { applyToJob } from "../../ReduxToolkit/JobApplicationSlice";
+} from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { applyToJob } from '../../ReduxToolkit/JobApplicationSlice';
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   width: 500,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  outline: "none",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  outline: 'none',
   boxShadow: 24,
   p: 4,
 };
@@ -28,18 +28,15 @@ const ApplyJob = ({ item, handleClose, open }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const { loading } = useSelector((state) => state.jobApplication);
-
   const companies = useSelector((state) => state.company.companies);
   const company = companies.find((c) => c.id === item.companyId);
-  const companyName = company?.name || "Unknown";
-
-  const applicantId = useSelector((state) => state.applicant.applicantDetails?.id);
-  const [coverLetter, setCoverLetter] = useState("");
-
-  console.log('Applicant ID: ' + applicantId);
+  const companyName = company?.name || 'Unknown';
+  const applicant = useSelector((state) => state.applicant.applicantDetails);
+  const applicantId = applicant ? applicant.id : null;
+  const [coverLetter, setCoverLetter] = useState('');
 
   const handleModalClose = () => {
-    setCoverLetter("");
+    setCoverLetter('');
     handleClose();
   };
 
@@ -47,7 +44,14 @@ const ApplyJob = ({ item, handleClose, open }) => {
     e.preventDefault();
 
     if (!user?.id) {
-      alert("You must be logged in to apply.");
+      alert('You must be logged in to apply.');
+      return;
+    }
+
+    if (!applicantId) {
+      alert(
+        'Applicant details not found. Please complete your profile before applying.'
+      );
       return;
     }
 
@@ -59,13 +63,13 @@ const ApplyJob = ({ item, handleClose, open }) => {
 
     try {
       await dispatch(applyToJob(jobApplicationData)).unwrap();
-      alert("Applied successfully!");
+      alert('Applied successfully!');
       handleModalClose();
     } catch (error) {
       const backendMsg =
-        error?.response?.data || error?.message || "Unexpected error";
-      console.error("Failed to apply for job:", backendMsg);
-      alert("Failed to apply: " + backendMsg);
+        error?.response?.data || error?.message || 'Unexpected error';
+      console.error('Failed to apply for job: ', backendMsg.message);
+      alert('Failed to apply: ' + backendMsg);
     }
   };
 
@@ -80,7 +84,7 @@ const ApplyJob = ({ item, handleClose, open }) => {
             <Grid item>
               <TextField
                 label="Job Title"
-                value={item?.name || ""}
+                value={item?.name || ''}
                 fullWidth
                 disabled
               />
@@ -96,7 +100,7 @@ const ApplyJob = ({ item, handleClose, open }) => {
             <Grid item>
               <TextField
                 label="Your Name"
-                value={user?.fullName || ""}
+                value={user?.fullName || ''}
                 fullWidth
                 disabled
               />
@@ -104,7 +108,7 @@ const ApplyJob = ({ item, handleClose, open }) => {
             <Grid item>
               <TextField
                 label="Your Email"
-                value={user?.email || ""}
+                value={user?.email || ''}
                 fullWidth
                 disabled
               />
@@ -127,7 +131,7 @@ const ApplyJob = ({ item, handleClose, open }) => {
                 fullWidth
                 disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : "Apply"}
+                {loading ? <CircularProgress size={24} /> : 'Apply'}
               </Button>
             </Grid>
           </Grid>

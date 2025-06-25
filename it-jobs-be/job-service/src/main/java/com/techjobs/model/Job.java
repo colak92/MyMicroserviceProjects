@@ -36,12 +36,21 @@ public class Job {
 
     private LocalDateTime createdAt;
 
-    @ElementCollection
-    private List<String> necessarySkills = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "job_necessary_skill",
+            joinColumns = @JoinColumn(name = "job_id"),
+            inverseJoinColumns = @JoinColumn(name = "necessary_skill_id")
+    )
+    private List<NecessarySkill> necessarySkills = new ArrayList<>();
 
-    @ElementCollection
-    private List<String> additionalSkills = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "job_additional_skill",
+            joinColumns = @JoinColumn(name = "job_id"),
+            inverseJoinColumns = @JoinColumn(name = "additional_skill_id")
+    )
+    private List<AdditionalSkill> additionalSkills = new ArrayList<>();
 
     private Long companyId;
-
 }

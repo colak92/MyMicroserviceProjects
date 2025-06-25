@@ -1,5 +1,5 @@
-import { MenuItem, Select, InputLabel, FormControl } from "@mui/material";
-import { JOB_APPLICATION_STATUS_OPTIONS } from "../../constants/jobApplicationStatus";
+import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { JOB_APPLICATION_STATUS_OPTIONS } from '../../constants/jobApplicationStatus';
 
 const JobApplicationStatusSelect = ({ value, onChange }) => {
   return (

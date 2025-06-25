@@ -1,56 +1,60 @@
-import React, { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
+import React, { useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
 import {
   Autocomplete,
   Button,
   CircularProgress,
   Grid,
   TextField,
-} from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchJobById, updateJob } from "../../ReduxToolkit/JobSlice";
-import { fetchAllCompanies } from "../../ReduxToolkit/CompanySlice";
-import dayjs from "dayjs";
-import { JOB_SENIORITY_OPTIONS } from "../../constants/jobSeniority";
-import { JOB_STATUS_OPTIONS } from "../../constants/jobStatus";
+} from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchJobById, updateJob } from '../../ReduxToolkit/JobSlice';
+import { fetchAllCompanies } from '../../ReduxToolkit/CompanySlice';
+import dayjs from 'dayjs';
+import { JOB_SENIORITY_OPTIONS } from '../../constants/jobSeniority';
+import { JOB_STATUS_OPTIONS } from '../../constants/jobStatus';
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  outline: "none",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  outline: 'none',
   boxShadow: 24,
   p: 4,
 };
-
-const necessarySkills = ["Java", "Spring Boot", "Docker", "Kubernetes", "React", "Swift"];
-const additionalSkills = ["Linux", "SQL", "Mui", "Git", "UX/UI Design"];
 
 export default function EditJob({ item, handleClose, open }) {
   const dispatch = useDispatch();
   const jobDetails = useSelector((state) => state.job.jobDetails);
   const [companies, setCompanies] = useState([]);
+  
+  const necessarySkills = useSelector(
+    (state) => state.necessarySkill.necessarySkills
+  );
+  const additionalSkills = useSelector(
+    (state) => state.additionalSkill.additionalSkills
+  );
   const [loadingCompanies, setLoadingCompanies] = useState(false);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    status: "",
-    seniority: "",
-    description: "",
-    deadline: null,
-  });
 
   const [selectedNecessarySkills, setSelectedNecessarySkills] = useState([]);
   const [selectedAdditionalSkills, setSelectedAdditionalSkills] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    status: '',
+    seniority: '',
+    description: '',
+    deadline: null,
+  });
 
   // Load companies
   useEffect(() => {
@@ -60,7 +64,7 @@ export default function EditJob({ item, handleClose, open }) {
         const res = await dispatch(fetchAllCompanies()).unwrap();
         setCompanies(Array.isArray(res) ? res : []);
       } catch (error) {
-        console.error("Failed to load companies:", error);
+        console.error('Failed to load companies: ', error.message);
       } finally {
         setLoadingCompanies(false);
       }
@@ -79,10 +83,10 @@ export default function EditJob({ item, handleClose, open }) {
   useEffect(() => {
     if (jobDetails && jobDetails.id === item?.id) {
       setFormData({
-        name: jobDetails.name || "",
-        status: jobDetails.status || "",
-        seniority: jobDetails.seniority || "",
-        description: jobDetails.description || "",
+        name: jobDetails.name || '',
+        status: jobDetails.status || '',
+        seniority: jobDetails.seniority || '',
+        description: jobDetails.description || '',
         deadline: jobDetails.deadline ? new Date(jobDetails.deadline) : null,
       });
 
@@ -100,8 +104,7 @@ export default function EditJob({ item, handleClose, open }) {
       // Find and set the company object matching companyId
       if (companies.length > 0) {
         const company = companies.find(
-          (c) => c.id === jobDetails.companyId || c.id == jobDetails.companyId
-        );
+          (c) => c.id === jobDetails.companyId || c.id == jobDetails.companyId);
         setSelectedCompany(company || null);
       }
     }
@@ -147,7 +150,7 @@ export default function EditJob({ item, handleClose, open }) {
       await dispatch(updateJob({ id: item.id, updatedJobData })).unwrap();
       handleClose();
     } catch (error) {
-      console.error("Failed to update job:", error);
+      console.error('Failed to update job: ', error.message);
     }
   };
 
@@ -185,7 +188,7 @@ export default function EditJob({ item, handleClose, open }) {
                 onChange={(event, newValue) =>
                   setFormData((prev) => ({
                     ...prev,
-                    status: newValue?.value || "",
+                    status: newValue?.value || '',
                   }))
                 }
                 renderInput={(params) => (
@@ -206,7 +209,7 @@ export default function EditJob({ item, handleClose, open }) {
                 onChange={(event, newValue) =>
                   setFormData((prev) => ({
                     ...prev,
-                    seniority: newValue?.value || "",
+                    seniority: newValue?.value || '',
                   }))
                 }
                 renderInput={(params) => (
@@ -244,7 +247,7 @@ export default function EditJob({ item, handleClose, open }) {
                 options={necessarySkills}
                 value={selectedNecessarySkills}
                 onChange={handleNecessarySkillsChange}
-                getOptionLabel={(option) => option}
+                getOptionLabel={(option) => option?.name || ""}
                 renderInput={(params) => (
                   <TextField label="Important Skills" fullWidth {...params} />
                 )}
@@ -257,7 +260,7 @@ export default function EditJob({ item, handleClose, open }) {
                 options={additionalSkills}
                 value={selectedAdditionalSkills}
                 onChange={handleAdditionalSkillsChange}
-                getOptionLabel={(option) => option}
+                getOptionLabel={(option) => option?.name || ""}
                 renderInput={(params) => (
                   <TextField label="Nice to have" fullWidth {...params} />
                 )}
@@ -267,7 +270,7 @@ export default function EditJob({ item, handleClose, open }) {
               <Autocomplete
                 sx={{ minWidth: 300 }}
                 options={companies}
-                getOptionLabel={(option) => option?.name || ""}
+                getOptionLabel={(option) => option?.name || ''}
                 value={selectedCompany}
                 onChange={(event, newValue) => setSelectedCompany(newValue)}
                 loading={loadingCompanies}
@@ -292,7 +295,7 @@ export default function EditJob({ item, handleClose, open }) {
               />
             </Grid>
             <Grid item xs={12}>
-              <Button fullWidth type="submit" sx={{ padding: ".9rem" }}>
+              <Button fullWidth type="submit" sx={{ padding: '.9rem' }}>
                 Update
               </Button>
             </Grid>

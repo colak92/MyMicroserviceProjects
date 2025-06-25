@@ -1,10 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap');
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .box {
@@ -48,7 +48,7 @@
 }
 
 .box .cover::before {
-  content: "";
+  content: '';
   position: absolute;
   height: 100%;
   width: 100%;
@@ -98,14 +98,14 @@
 .cover .text .text-signup {
   font-size: 26px;
   font-weight: 600;
-  color: #00008B;
+  color: #00008b;
   line-height: normal;
 }
 
 .cover .text .text-signup2 {
   margin-top: 7px;
   font-size: 16px;
-  color: #00008B;
+  color: #00008b;
 }
 
 .box .form-content {

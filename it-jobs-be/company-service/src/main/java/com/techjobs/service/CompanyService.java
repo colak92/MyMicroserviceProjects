@@ -1,19 +1,22 @@
 package com.techjobs.service;
 
-import com.techjobs.model.Company;
+import com.techjobs.dto.CompanyDTO;
+import com.techjobs.model.Founder;
 
 import java.util.List;
 
 public interface CompanyService {
 
-    Company createCompany(Company company, String requestedRole) throws Exception;
+    CompanyDTO createCompany(CompanyDTO companyDTO, String requestedRole) throws Exception;
 
-    Company getCompanyById(Long id) throws Exception;
+    CompanyDTO getCompanyById(Long id) throws Exception;
 
-    List<Company> getAllCompanies();
+    List<CompanyDTO> getAllCompanies();
 
-    Company updateCompany(Long id, Company updatedCompany, Long userId) throws Exception;
+    CompanyDTO updateCompany(Long id, CompanyDTO updatedCompanyDTO, Long userId) throws Exception;
 
     void deleteCompany(Long id) throws Exception;
+
+    List<Founder> getAllFounders();
 
 }

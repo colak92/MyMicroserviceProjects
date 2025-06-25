@@ -1,86 +1,133 @@
 package com.techjobs.service;
 
+import com.techjobs.dto.JobDTO;
+import com.techjobs.mapper.JobMapper;
+import com.techjobs.model.AdditionalSkill;
 import com.techjobs.model.Job;
 import com.techjobs.model.JobStatus;
+import com.techjobs.model.NecessarySkill;
+import com.techjobs.repository.AdditionalSkillRepository;
 import com.techjobs.repository.JobRepository;
+import com.techjobs.repository.NecessarySkillRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JobServiceImpl implements JobService {
-    private JobRepository jobRepository;
 
-    public JobServiceImpl(JobRepository jobRepository){
+    private final JobRepository jobRepository;
+
+    private final NecessarySkillRepository necessarySkillRepository;
+
+    private final AdditionalSkillRepository additionalSkillRepository;
+
+    public JobServiceImpl(
+            JobRepository jobRepository,
+            NecessarySkillRepository necessarySkillRepository,
+            AdditionalSkillRepository additionalSkillRepository){
+
         this.jobRepository = jobRepository;
+        this.necessarySkillRepository = necessarySkillRepository;
+        this.additionalSkillRepository = additionalSkillRepository;
     }
 
     @Override
-    public Job createJob(Job job, String requestedRole) throws Exception {
-        if (!requestedRole.equals("ROLE_ADMIN")){
+    public JobDTO createJob(JobDTO jobDTO, String requestedRole) throws Exception {
+        if (!"ROLE_ADMIN".equals(requestedRole)) {
             throw new Exception("Only admin can create a job");
         }
 
+        Job job = JobMapper.toEntity(jobDTO);
         job.setStatus(JobStatus.OPEN);
         job.setCreatedAt(LocalDateTime.now());
 
-        return jobRepository.save(job);
+        Job savedJob = jobRepository.save(job);
+        return JobMapper.toDTO(savedJob);
     }
 
     @Override
-    public Job getJobById(Long id) throws Exception {
-        return jobRepository.findById(id).orElseThrow(() -> new Exception("Job not found with id: " + id));
+    public JobDTO getJobById(Long id) throws Exception {
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new Exception("Job not found with id: " + id));
+        return JobMapper.toDTO(job);
     }
 
     @Override
-    public List<Job> getAllJobs() {
+    public List<JobDTO> getAllJobs() {
         List<Job> allJobs = jobRepository.findAll();
-        return allJobs;
+        return allJobs.stream()
+                .map(JobMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Job> getJobsByCompanyId(Long companyId) throws Exception {
-        return jobRepository.findByCompanyId(companyId);
+    public List<JobDTO> getJobsByCompanyId(Long companyId) throws Exception {
+        List<Job> jobs = jobRepository.findByCompanyId(companyId);
+        return jobs.stream()
+                .map(JobMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Job updateJob(Long id, Job updatedJob, Long userId) throws Exception {
-        Job existingJob = jobRepository.findById(id).orElseThrow(() -> new Exception("Job not found"));
+    public JobDTO updateJob(Long id, JobDTO updatedJobDTO, Long userId) throws Exception {
+        Job existingJob = jobRepository.findById(id)
+                .orElseThrow(() -> new Exception("Job not found"));
 
-        if (updatedJob.getName() != null){
-            existingJob.setName(updatedJob.getName());
+        if (updatedJobDTO.getName() != null) {
+            existingJob.setName(updatedJobDTO.getName());
         }
 
-        if (updatedJob.getStatus() != null){
-            existingJob.setStatus(updatedJob.getStatus());
+        if (updatedJobDTO.getStatus() != null) {
+            existingJob.setStatus(updatedJobDTO.getStatus());
         }
 
-        if (updatedJob.getSeniority() != null){
-            existingJob.setSeniority(updatedJob.getSeniority());
+        if (updatedJobDTO.getSeniority() != null) {
+            existingJob.setSeniority(updatedJobDTO.getSeniority());
         }
 
-        if (updatedJob.getDescription() != null){
-            existingJob.setDescription(updatedJob.getDescription());
+        if (updatedJobDTO.getDescription() != null) {
+            existingJob.setDescription(updatedJobDTO.getDescription());
         }
 
-        if (updatedJob.getDeadline() != null){
-            existingJob.setDeadline(updatedJob.getDeadline());
+        if (updatedJobDTO.getDeadline() != null) {
+            existingJob.setDeadline(updatedJobDTO.getDeadline());
         }
 
-        if (updatedJob.getNecessarySkills() != null){
-            existingJob.setNecessarySkills(updatedJob.getNecessarySkills());
+        if (updatedJobDTO.getNecessarySkills() != null) {
+            // Map DTO to entity list
+            List<NecessarySkill> necessarySkills = updatedJobDTO.getNecessarySkills().stream()
+                    .map(nsDto -> {
+                        NecessarySkill ns = new NecessarySkill();
+                        ns.setId(nsDto.getId());
+                        ns.setName(nsDto.getName());
+                        return ns;
+                    })
+                    .collect(Collectors.toList());
+            existingJob.setNecessarySkills(necessarySkills);
         }
 
-        if (updatedJob.getAdditionalSkills() != null){
-            existingJob.setAdditionalSkills(updatedJob.getAdditionalSkills());
+        if (updatedJobDTO.getAdditionalSkills() != null) {
+            // Map DTO to entity list
+            List<AdditionalSkill> additionalSkills = updatedJobDTO.getAdditionalSkills().stream()
+                    .map(asDto -> {
+                        AdditionalSkill as = new AdditionalSkill();
+                        as.setId(asDto.getId());
+                        as.setName(asDto.getName());
+                        return as;
+                    })
+                    .collect(Collectors.toList());
+            existingJob.setAdditionalSkills(additionalSkills);
         }
 
-        if (updatedJob.getCompanyId() != null){
-            existingJob.setCompanyId(updatedJob.getCompanyId());
+        if (updatedJobDTO.getCompanyId() != null) {
+            existingJob.setCompanyId(updatedJobDTO.getCompanyId());
         }
 
-        return jobRepository.save(existingJob);
+        Job savedJob = jobRepository.save(existingJob);
+        return JobMapper.toDTO(savedJob);
     }
 
     @Override
@@ -92,5 +139,15 @@ public class JobServiceImpl implements JobService {
     @Override
     public boolean exists(Long jobId) {
         return jobRepository.existsById(jobId);
+    }
+
+    @Override
+    public List<NecessarySkill> getAllNecessarySkills() {
+        return necessarySkillRepository.findAll();
+    }
+
+    @Override
+    public List<AdditionalSkill> getAllAdditionalSkills() {
+        return additionalSkillRepository.findAll();
     }
 }

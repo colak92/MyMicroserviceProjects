@@ -18,12 +18,23 @@ const Signin = ({ togglePanel }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     dispatch(login(formData));
-    console.log('Login form', formData);
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-      <h1 className="text-lg font-bold text-center pb-8" style={{ color: '#4d7fd0' }}>Login</h1>
+    <div
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+    >
+      <h1
+        className="text-lg font-bold text-center pb-8"
+        style={{ color: '#4d7fd0' }}
+      >
+        Login
+      </h1>
       <form onSubmit={handleSubmit} style={{ width: '100%' }}>
         <Box display="flex" flexDirection="column" gap={2}>
           <TextField
@@ -68,12 +79,12 @@ const Signin = ({ togglePanel }) => {
           </Button>
         </Box>
       </form>
-      <div/>
+      <div />
       <div style={{ marginTop: '10px' }}>
-        <span>
-            Don't have an account?
-        </span>
-        <Button onClick={() => togglePanel()} style={{ marginLeft: '10px' }}>Sign Up</Button>
+        <span>Don't have an account?</span>
+        <Button onClick={() => togglePanel()} style={{ marginLeft: '10px' }}>
+          Sign Up
+        </Button>
       </div>
     </div>
   );

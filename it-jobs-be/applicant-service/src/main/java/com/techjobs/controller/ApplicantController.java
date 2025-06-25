@@ -15,8 +15,8 @@ import java.util.Optional;
 @RequestMapping("/api/applicants")
 public class ApplicantController {
 
-    private ApplicantService applicantService;
-    private UserClient userClient;
+    private final ApplicantService applicantService;
+    private final UserClient userClient;
 
     public ApplicantController (ApplicantService applicantService, UserClient userClient){
         this.userClient = userClient;

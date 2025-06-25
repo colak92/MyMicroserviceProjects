@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   createApplicant,
   updateApplicant,
   fetchApplicantProfile,
-} from "../../ReduxToolkit/ApplicantSlice";
-import { Box, Modal } from "@mui/material";
+} from '../../ReduxToolkit/ApplicantSlice';
+import { Box, Modal } from '@mui/material';
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  outline: "none",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  outline: 'none',
   boxShadow: 24,
   p: 4,
 };
@@ -23,20 +23,22 @@ const style = {
 const CompleteApplicantProfile = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  const applicantDetails = useSelector((state) => state.applicant.applicantDetails);
+  const applicantDetails = useSelector(
+    (state) => state.applicant.applicantDetails
+  );
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [resumeUrl, setResumeUrl] = useState("");
-  const [skills, setSkills] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [resumeUrl, setResumeUrl] = useState('');
+  const [skills, setSkills] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setName(applicantDetails?.name || "");
-    setEmail(applicantDetails?.email || "");
-    setResumeUrl(applicantDetails?.resumeUrl || "");
-    setSkills(applicantDetails?.skills || "");
+    setName(applicantDetails?.name || '');
+    setEmail(applicantDetails?.email || '');
+    setResumeUrl(applicantDetails?.resumeUrl || '');
+    setSkills(applicantDetails?.skills || '');
   }, [applicantDetails]);
 
   const handleSubmit = async (e) => {
@@ -66,9 +68,9 @@ const CompleteApplicantProfile = ({ open, onClose }) => {
 
       await dispatch(fetchApplicantProfile());
       onClose();
-    } catch (err) {
-      console.error("Error saving profile:", err);
-      setError(err.message || "Failed to save profile");
+    } catch (error) {
+      console.error('Error saving profile: ', error.message);
+      setError(error.message || 'Failed to save profile');
     } finally {
       setLoading(false);
     }
@@ -146,7 +148,7 @@ const CompleteApplicantProfile = ({ open, onClose }) => {
                 disabled={loading}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
               >
-                {loading ? "Saving..." : "Save Profile"}
+                {loading ? 'Saving...' : 'Save Profile'}
               </button>
               <button
                 type="button"

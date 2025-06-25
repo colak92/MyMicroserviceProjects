@@ -4,14 +4,13 @@ import com.techjobs.model.Applicant;
 import com.techjobs.repository.ApplicantRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ApplicantServiceImpl implements ApplicantService {
 
-    private ApplicantRepository applicantRepository;
+    private final ApplicantRepository applicantRepository;
 
     public ApplicantServiceImpl(ApplicantRepository applicantRepository){
         this.applicantRepository = applicantRepository;

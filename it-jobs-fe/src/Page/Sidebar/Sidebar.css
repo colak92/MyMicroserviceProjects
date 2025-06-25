@@ -1,25 +1,25 @@
 .card {
-    background-color: #0c071b;
-    box-shadow: rgba(106, 145, 255, 0.507) 0px 0px 20px;
-    padding: 1rem;
-    border-radius: 5px;
+  background-color: #0c071b;
+  box-shadow: rgba(106, 145, 255, 0.507) 0px 0px 20px;
+  padding: 1rem;
+  border-radius: 5px;
 }
 
 .menuItem {
-    border: 2px solid #4d7fd0;
+  border: 2px solid #4d7fd0;
 }
 
 .activeMenuItem {
-    background-image: linear-gradient(150deg, #4d7fd0, #4ca3ff);
-    color: white;
+  background-image: linear-gradient(150deg, #4d7fd0, #4ca3ff);
+  color: white;
 }
 
 .logoutButton {
-    color: white !important;
-    background-image: linear-gradient(150deg, #8b2c50, #b8003f);
+  color: white !important;
+  background-image: linear-gradient(150deg, #8b2c50, #b8003f);
 }
 
 .customButton {
-    background-image: linear-gradient(150deg, #4d7fd0, #4ca3ff);
-    color: white !important;
+  background-image: linear-gradient(150deg, #4d7fd0, #4ca3ff);
+  color: white !important;
 }

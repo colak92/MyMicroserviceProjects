@@ -1,9 +1,12 @@
 server:
-  port: 5002
+  port: 9002
 
 spring:
   application:
     name: COMPANY-SERVICE
+  sql:
+    init:
+      mode: always
 
   jpa:
     hibernate:
@@ -35,4 +38,4 @@ management:
     health:
       show-details: always
   server:
-    port: 5002
+    port: 9002

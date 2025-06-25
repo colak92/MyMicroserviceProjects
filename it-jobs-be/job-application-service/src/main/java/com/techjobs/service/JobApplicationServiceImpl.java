@@ -12,11 +12,11 @@ import java.util.List;
 @Service
 public class JobApplicationServiceImpl implements JobApplicationService {
 
-    private JobApplicationRepository jobApplicationRepository;
+    private final JobApplicationRepository jobApplicationRepository;
 
-    private ApplicantClient applicantClient;
+    private final ApplicantClient applicantClient;
 
-    private JobClient jobClient;
+    private final JobClient jobClient;
 
     public JobApplicationServiceImpl(
             JobApplicationRepository jobApplicationRepository,

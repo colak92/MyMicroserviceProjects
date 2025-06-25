@@ -1,23 +1,28 @@
 package com.techjobs.service;
 
-import com.techjobs.model.Job;
-import com.techjobs.model.JobStatus;
+import com.techjobs.dto.JobDTO;
+import com.techjobs.model.AdditionalSkill;
+import com.techjobs.model.NecessarySkill;
 
 import java.util.List;
 
 public interface JobService {
 
-    Job createJob(Job job, String requestedRole) throws Exception;
+    JobDTO createJob(JobDTO jobDTO, String requestedRole) throws Exception;
 
-    Job getJobById(Long id) throws Exception;
+    JobDTO getJobById(Long id) throws Exception;
 
-    List<Job> getAllJobs();
+    List<JobDTO> getAllJobs();
 
-    List<Job> getJobsByCompanyId(Long companyId) throws  Exception;
+    List<JobDTO> getJobsByCompanyId(Long companyId) throws Exception;
 
-    Job updateJob(Long id, Job updatedJob, Long userId) throws Exception;
+    JobDTO updateJob(Long id, JobDTO updatedJobDTO, Long userId) throws Exception;
 
     void deleteJob(Long id) throws Exception;
 
     boolean exists(Long jobId);
+
+    List<NecessarySkill> getAllNecessarySkills();
+
+    List<AdditionalSkill> getAllAdditionalSkills();
 }

@@ -1,5 +1,5 @@
 server:
-  port: 5005
+  port: 9005
 
 spring:
   application:
@@ -35,4 +35,4 @@ management:
     health:
       show-details: always
   server:
-    port: 5005
+    port: 9005

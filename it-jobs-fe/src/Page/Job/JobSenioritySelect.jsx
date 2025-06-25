@@ -1,5 +1,5 @@
-import { MenuItem, Select, InputLabel, FormControl } from "@mui/material";
-import { JOB_SENIORITY_OPTIONS } from "../constants/jobSeniority";
+import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { JOB_SENIORITY_OPTIONS } from '../constants/jobSeniority';
 
 const JobSenioritySelect = ({ value, onChange }) => {
   return (

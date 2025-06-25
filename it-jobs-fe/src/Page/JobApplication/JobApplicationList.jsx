@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  Box,
-  Modal,
-  Typography,
-} from '@mui/material';
+import { Box, Modal, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllJobApplications } from '../../ReduxToolkit/JobApplicationSlice';
 import JobApplicationCard from './JobApplicationCard';
@@ -25,7 +21,9 @@ const style = {
 const JobApplicationList = ({ open, handleClose }) => {
   const dispatch = useDispatch();
 
-  const jobApplications = useSelector((state) => state.jobApplication.jobApplications);
+  const jobApplications = useSelector(
+    (state) => state.jobApplication.jobApplications
+  );
   const loading = useSelector((state) => state.job.loading);
   const error = useSelector((state) => state.job.error);
 
@@ -51,7 +49,11 @@ const JobApplicationList = ({ open, handleClose }) => {
 
         {!loading &&
           jobApplications.map((jobApplication) => (
-            <JobApplicationCard key={jobApplication.id} item={jobApplication} disableJobApplicationList={true} />
+            <JobApplicationCard
+              key={jobApplication.id}
+              item={jobApplication}
+              disableJobApplicationList={true}
+            />
           ))}
 
         <Box mt={2} display="flex" justifyContent="flex-end">

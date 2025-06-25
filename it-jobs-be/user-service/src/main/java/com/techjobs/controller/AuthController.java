@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private CustomUserServiceImpl userDetailsService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final CustomUserServiceImpl userDetailsService;
 
     public AuthController(UserRepository userRepository,
                    PasswordEncoder passwordEncoder,
@@ -75,8 +75,6 @@ public class AuthController {
         String username = loginRequest.getEmail();
         String password = loginRequest.getPassword();
 
-        System.out.println(username + "----------" + password);
-
         Authentication authentication = authenticate(username, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -93,21 +91,15 @@ public class AuthController {
     private Authentication authenticate(String username, String password){
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        System.out.println("Sign in userDetails: " + userDetails);
-
         if (userDetails == null){
-            System.out.println("Sign in userDetails - null " + userDetails);
             throw new BadCredentialsException("Invalid username or password");
         }
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())){
-            System.out.println("Sign in userDetails - password not match: " + userDetails);
-            throw new BadCredentialsException("Invalid username or password");
+            throw new BadCredentialsException("Password not match");
         }
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
-
-
 
 }

@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  Box,
-  Modal,
-  Typography,
-} from '@mui/material';
+import { Box, Modal, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllJobs } from '../../ReduxToolkit/JobSlice';
 import { fetchCompanyById } from '../../ReduxToolkit/CompanySlice';

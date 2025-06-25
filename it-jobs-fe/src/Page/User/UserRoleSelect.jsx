@@ -1,5 +1,5 @@
-import { MenuItem, Select, InputLabel, FormControl } from "@mui/material";
-import { USER_ROLE_OPTIONS } from "../../constants/userRole";
+import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { USER_ROLE_OPTIONS } from '../../constants/userRole';
 
 const UserRoleSelect = ({ value, onChange }) => {
   return (

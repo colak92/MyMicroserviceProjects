@@ -1,5 +1,5 @@
-import { MenuItem, Select, InputLabel, FormControl } from "@mui/material";
-import { COMPANY_STATUS_OPTIONS } from "../../constants/companyStatus";
+import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { COMPANY_STATUS_OPTIONS } from '../../constants/companyStatus';
 
 const CompanyStatusSelect = ({ value, onChange }) => {
   return (

@@ -14,10 +14,10 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p???" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   eureka-server:
     build:
@@ -35,17 +35,17 @@ services:
       dockerfile: user-service/Dockerfile
     container_name: user-service
     ports:
-      - "5001:5001"
+      - "9001:9001"
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=60
+      - WAIT_TIMEOUT=120
     depends_on:
       - mysql
       - eureka-server
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5001/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:9001/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -58,17 +58,17 @@ services:
       dockerfile: company-service/Dockerfile
     container_name: company-service
     ports:
-      - "5002:5002"
+      - "9002:9002"
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=60
+      - WAIT_TIMEOUT=120
     depends_on:
       - mysql
       - eureka-server
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5002/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:9002/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -81,17 +81,17 @@ services:
       dockerfile: job-service/Dockerfile
     container_name: job-service
     ports:
-      - "5003:5003"
+      - "9003:9003"
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=60
+      - WAIT_TIMEOUT=120
     depends_on:
       - mysql
       - eureka-server
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5003/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:9003/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -104,17 +104,17 @@ services:
       dockerfile: applicant-service/Dockerfile
     container_name: applicant-service
     ports:
-      - "5004:5004"
+      - "9004:9004"
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=60
+      - WAIT_TIMEOUT=120
     depends_on:
       - mysql
       - eureka-server
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5004/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:9004/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -127,17 +127,17 @@ services:
       dockerfile: job-application-service/Dockerfile
     container_name: job-application-service
     ports:
-      - "5005:5005"
+      - "9005:9005"
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=60
+      - WAIT_TIMEOUT=120
     depends_on:
       - mysql
       - eureka-server
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5005/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:9005/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -150,11 +150,11 @@ services:
       dockerfile: gateway-server/Dockerfile
     container_name: gateway-server
     ports:
-      - "5000:5000"
+      - "9000:9000"
     environment:
       - WAIT_FOR_HOST=eureka-server
       - WAIT_FOR_PORT=8070
-      - WAIT_TIMEOUT=200
+      - WAIT_TIMEOUT=300
     depends_on:
       - eureka-server
       - user-service

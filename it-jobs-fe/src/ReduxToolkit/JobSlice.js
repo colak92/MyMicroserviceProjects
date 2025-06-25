@@ -1,94 +1,95 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { api, setAuthHeader } from "../api/api";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { api, setAuthHeader } from '../api/api';
 
-export const fetchAllJobs = createAsyncThunk("job/fetchAllJobs", async () => {
-  setAuthHeader(localStorage.getItem("jwt"), api);
+export const fetchAllJobs = createAsyncThunk('job/fetchAllJobs', async () => {
+  setAuthHeader(localStorage.getItem('jwt'), api);
   try {
     const { data } = await api.get(`/api/jobs`);
-    console.log("Fetch jobs data: ", data);
+    console.log('Fetch jobs - Success');
     return data;
   } catch (error) {
-    console.log("Fetch jobs - Catch error", error);
+    console.log('Fetch jobs - Error', error.message);
     throw Error(error.response.data.error);
   }
 });
 
 export const fetchJobsByCompany = createAsyncThunk(
-  "job/fetchJobsByCompany",
+  'job/fetchJobsByCompany',
   async (companyId) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
     try {
       const { data } = await api.get(`/api/jobs/company/${companyId}`);
+      console.log('Get jobs for company - Success');
       return data;
     } catch (error) {
-      console.log("Get Jobs For Company - Catch error", error);
+      console.log('Get jobs for company - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 export const fetchJobById = createAsyncThunk(
-  "job/fetchJobById",
+  'job/fetchJobById',
   async ({ jobId }) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
     try {
       const { data } = await api.get(`/api/jobs/${jobId}`);
-      console.log("Fetch job by id: ", data);
+      console.log('Fetch job by id - Success');
       return data;
     } catch (error) {
-      console.log("Fetch job by id - Catch error", error);
+      console.log('Fetch job by id - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 export const createJob = createAsyncThunk(
-  "job/createJob",
+  'job/createJob',
   async ({ jobData }) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
     try {
       const { data } = await api.post(`/api/jobs`, jobData);
-      console.log("Created job: ", data);
+      console.log('Created job - Success');
       return data;
     } catch (error) {
-      console.log("Created job - Catch error", error);
+      console.log('Created job - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 export const updateJob = createAsyncThunk(
-  "job/updateJob",
+  'job/updateJob',
   async ({ id, updatedJobData }) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
     try {
       const { data } = await api.put(`/api/jobs/${id}`, updatedJobData);
-      console.log("Updated job: ", data);
+      console.log('Updated job - Success');
       return data;
     } catch (error) {
-      console.log("Updated job - Catch error", error);
+      console.log('Updated job - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 export const deleteJob = createAsyncThunk(
-  "job/deleteJob",
+  'job/deleteJob',
   async ({ jobId }) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
     try {
       await api.delete(`/api/jobs/${jobId}`);
-      console.log("Job deleted successfully");
+      console.log('Job deleted - Success');
       return jobId;
     } catch (error) {
-      console.log("Job deleted - Catch error", error);
+      console.log('Job deleted - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 const jobSlice = createSlice({
-  name: "job",
+  name: 'job',
   initialState: {
     jobs: [],
     loading: false,

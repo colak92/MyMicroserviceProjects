@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import ApplicantList from "./ApplicantList";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import React, { useState } from 'react';
+import ApplicantList from './ApplicantList';
+import { IconButton, Menu, MenuItem } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const ApplicantCard = ({ item, disableApplicantList = false }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+  const [openApplicantList, setOpenApplicantList] = useState(false);
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -16,7 +17,6 @@ const ApplicantCard = ({ item, disableApplicantList = false }) => {
   };
 
   // applicant list
-  const [openApplicantList, setOpenApplicantList] = useState(false);
   const handleCloseApplicantList = () => {
     setOpenApplicantList(false);
   };
@@ -34,11 +34,11 @@ const ApplicantCard = ({ item, disableApplicantList = false }) => {
                 data-testid="applicantEmail"
               >
                 <span
-                  style={{ color: "rgb(77, 127, 208)" }}
+                  style={{ color: 'rgb(77, 127, 208)' }}
                   className="font-semibold"
                 >
                   Email:
-                </span>{" "}
+                </span>{' '}
                 {item.email}
               </p>
 
@@ -47,11 +47,11 @@ const ApplicantCard = ({ item, disableApplicantList = false }) => {
                 data-testid="applicantResumeUrl"
               >
                 <span
-                  style={{ color: "rgb(77, 127, 208)" }}
+                  style={{ color: 'rgb(77, 127, 208)' }}
                   className="font-semibold"
                 >
                   Resume:
-                </span>{" "}
+                </span>{' '}
                 {item.resumeUrl}
               </p>
 
@@ -60,11 +60,11 @@ const ApplicantCard = ({ item, disableApplicantList = false }) => {
                 data-testid="applicantSkills"
               >
                 <span
-                  style={{ color: "rgb(77, 127, 208)" }}
+                  style={{ color: 'rgb(77, 127, 208)' }}
                   className="font-semibold"
                 >
                   Skills:
-                </span>{" "}
+                </span>{' '}
                 {item.skills}
               </p>
             </div>
@@ -74,9 +74,9 @@ const ApplicantCard = ({ item, disableApplicantList = false }) => {
           <IconButton
             id="basic-button"
             title="More options"
-            aria-controls={openMenu ? "basic-menu" : undefined}
+            aria-controls={openMenu ? 'basic-menu' : undefined}
             aria-haspopup="true"
-            aria-expanded={openMenu ? "true" : undefined}
+            aria-expanded={openMenu ? 'true' : undefined}
             onClick={handleMenuClick}
           >
             <MoreVertIcon />

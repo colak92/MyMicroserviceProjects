@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { fetchAllApplicants } from '../../ReduxToolkit/ApplicantSlice';
 import ApplicantCard from './ApplicantCard';
@@ -20,11 +20,11 @@ const style = {
 
 const ApplicantList = ({ open, handleClose }) => {
   const dispatch = useDispatch();
-  const auth = useSelector(store => store.auth);
+  const auth = useSelector((store) => store.auth);
 
-  const applicants = useSelector(store => store.applicant.applicants);
-  const loading = useSelector(store => store.applicant.loading);
-  const error = useSelector(store => store.applicant.error);
+  const applicants = useSelector((store) => store.applicant.applicants);
+  const loading = useSelector((store) => store.applicant.loading);
+  const error = useSelector((store) => store.applicant.error);
 
   useEffect(() => {
     if (open && auth.user?.role === 'ROLE_APPLICANT') {
@@ -48,7 +48,11 @@ const ApplicantList = ({ open, handleClose }) => {
 
         {!loading &&
           applicants.map((applicant) => (
-            <ApplicantCard key={applicant.id} item={applicant} disableApplicantList={true} />
+            <ApplicantCard
+              key={applicant.id}
+              item={applicant}
+              disableApplicantList={true}
+            />
           ))}
 
         <Box mt={2} display="flex" justifyContent="flex-end">
@@ -58,6 +62,5 @@ const ApplicantList = ({ open, handleClose }) => {
     </Modal>
   );
 };
-
 
 export default ApplicantList;

@@ -1,8 +1,7 @@
 import CompanyList from '../Company/CompanyList';
-import Sidebar from '../Sidebar/Sidebar'
+import Sidebar from '../Sidebar/Sidebar';
 
 const Home = () => {
-  
   return (
     <div className="lg:flex px-5 lg:px-20 pt-[2.9vh] min-h-screen">
       <div className="hidden lg:block w-[25vw]">
@@ -12,7 +11,7 @@ const Home = () => {
         <CompanyList />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Home;

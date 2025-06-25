@@ -1,9 +1,12 @@
 server:
-  port: 5003
+  port: 9003
 
 spring:
   application:
     name: JOB-SERVICE
+  sql:
+    init:
+      mode: always
 
   jpa:
     hibernate:
@@ -35,4 +38,4 @@ management:
     health:
       show-details: always
   server:
-    port: 5003
+    port: 9003

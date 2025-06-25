@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchApplicantProfile } from "../../ReduxToolkit/ApplicantSlice";
-import CompleteApplicantProfile from "../Applicant/CompleteApplicantProfile";
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchApplicantProfile } from '../../ReduxToolkit/ApplicantSlice';
+import CompleteApplicantProfile from '../Applicant/CompleteApplicantProfile';
 
 const RequireApplicantProfile = ({ children }) => {
   const dispatch = useDispatch();
@@ -13,20 +13,19 @@ const RequireApplicantProfile = ({ children }) => {
 
   useEffect(() => {
     const checkProfile = async () => {
-      if (user?.role === "ROLE_APPLICANT") {
+      if (user?.role === 'ROLE_APPLICANT') {
         try {
           const profile = await dispatch(fetchApplicantProfile()).unwrap();
-          console.log("✅ Profile fetched:", profile);
           if (!profile?.resumeUrl) {
-            console.log("⚠️ Resume missing. Forcing profile completion modal.");
+            console.log('⚠️ Resume missing. Forcing profile completion modal.');
             setOpenCompleteProfile(true);
           } else {
-            console.log("✅ Resume exists. No need for modal.");
+            console.log('✅ Resume exists. No need for modal.');
             setOpenCompleteProfile(false);
           }
-        } catch (err) {
-          console.error("❌ Error fetching profile:", err);
-          if (err?.response?.status === 404) {
+        } catch (error) {
+          console.error('❌ Error fetching profile: ', error.message);
+          if (error?.response?.status === 404) {
             setOpenCompleteProfile(true);
           }
         }
@@ -39,20 +38,20 @@ const RequireApplicantProfile = ({ children }) => {
   }, [user, dispatch]);
 
   useEffect(() => {
-    console.log("🔍 User:", user);
-    console.log("🔍 Applicant details from Redux:", applicantDetails);
-    console.log("🔍 Modal open state:", openCompleteProfile);
+    console.log('🔍 User: ');
+    console.log('🔍 Applicant details from Redux: ');
+    console.log('🔍 Modal open state: ');
   }, [user, applicantDetails, openCompleteProfile]);
 
   // Prevent page scroll while modal is open
   useEffect(() => {
     if (openCompleteProfile) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [openCompleteProfile]);
 

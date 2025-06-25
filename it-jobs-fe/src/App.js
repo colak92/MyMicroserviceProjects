@@ -19,8 +19,8 @@ function App() {
     if (token) {
       dispatch(getUserProfile(token))
         .unwrap()
-        .catch((err) => {
-          console.error('Failed to fetch user profile:', err.message);
+        .catch((error) => {
+          console.error('Failed to fetch user profile: ', error.message);
           localStorage.removeItem('jwt');
         });
     }

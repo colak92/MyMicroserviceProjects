@@ -1,50 +1,58 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { api, setAuthHeader } from "../api/api";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { api, setAuthHeader } from '../api/api';
 
 export const fetchAllJobApplications = createAsyncThunk(
-  "job/fetchAllJobApplications",
+  'job/fetchAllJobApplications',
   async () => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
     try {
       const { data } = await api.get(`/api/job-applications`);
-      console.log("Fetch job-applications data: ", data);
+      console.log('Fetch job-applications - Success');
       return data;
     } catch (error) {
-      console.error("Fetch job-applications - Catch error", error);
-      throw Error(error?.response?.data || "Failed to fetch job applications");
+      console.error('Fetch job-applications - Error', error.message);
+      throw Error(error?.response?.data || 'Failed to fetch job applications');
     }
   }
 );
 
 export const fetchJobApplicationById = createAsyncThunk(
-  "job/fetchJobApplicationById",
+  'job/fetchJobApplicationById',
   async (jobApplicationId) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
     try {
-      const { data } = await api.get(`/api/job-applications/${jobApplicationId}`);
+      const { data } = await api.get(
+        `/api/job-applications/${jobApplicationId}`
+      );
+      console.log('Fetch job-application by id - Success');
       return data;
     } catch (error) {
-      console.error("Fetch job-application by id - Catch error", error);
-      throw Error(error?.response?.data || "Failed to fetch job application");
+      console.error('Fetch job-application by id - Error', error.message);
+      throw Error(error?.response?.data || 'Failed to fetch job application');
     }
   }
 );
 
-export const applyToJob = createAsyncThunk("job/applyToJob",
+export const applyToJob = createAsyncThunk(
+  'job/applyToJob',
   async (jobApplicationData) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
     try {
-      const { data } = await api.post(`/api/job-applications`, jobApplicationData);
+      const { data } = await api.post(
+        `/api/job-applications`,
+        jobApplicationData
+      );
+      console.log('Apply to job - Success');
       return data;
     } catch (error) {
-      console.error("Apply for job - Catch error", error);
-      throw Error(error?.response?.data || "Failed to apply to job");
+      console.error('Apply to job - Error', error.message);
+      throw Error(error?.response?.data || 'Failed to apply to job');
     }
   }
 );
 
 const jobApplicationSlice = createSlice({
-  name: "jobApplication",
+  name: 'jobApplication',
   initialState: {
     loading: false,
     error: null,

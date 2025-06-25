@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Button, TextField, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import {
+  Button,
+  TextField,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { register } from '../../ReduxToolkit/AuthSlice';
 import { USER_ROLE_OPTIONS } from '../../constants/userRole';
@@ -21,15 +29,26 @@ const Signup = ({ togglePanel }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     dispatch(register(formData));
-    console.log('Login form', formData);
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-      <h1 className="text-lg font-bold text-center pb-8" style={{ color: '#4d7fd0' }}>Register</h1>
+    <div
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+    >
+      <h1
+        className="text-lg font-bold text-center pb-8"
+        style={{ color: '#4d7fd0' }}
+      >
+        Register
+      </h1>
       <form onSubmit={handleSubmit} style={{ width: '100%' }}>
         <Box display="flex" flexDirection="column" gap={2}>
-           <TextField
+          <TextField
             fullWidth
             label="Full Name"
             name="fullName"
@@ -77,33 +96,31 @@ const Signup = ({ togglePanel }) => {
                 </MenuItem>
               ))}
             </Select>
-        </FormControl>
+          </FormControl>
           <div>
-          <Button
-            fullWidth
-            type="submit"
-            sx={{
-              padding: '.9rem',
-              backgroundColor: '#4d7fd0',
-              color: '#fff',
-              fontWeight: 'bold',
-              borderRadius: 1,
-              boxShadow: '0 4px 15px rgba(140, 190, 255, 0.5)',
-              '&:hover': {
-                backgroundColor: '#3a5cb1',
-                boxShadow: '0 6px 20px rgba(58, 90, 177, 0.6)',
-              },
-            }}
-          >
-            Register
-          </Button>
+            <Button
+              fullWidth
+              type="submit"
+              sx={{
+                padding: '.9rem',
+                backgroundColor: '#4d7fd0',
+                color: '#fff',
+                fontWeight: 'bold',
+                borderRadius: 1,
+                boxShadow: '0 4px 15px rgba(140, 190, 255, 0.5)',
+                '&:hover': {
+                  backgroundColor: '#3a5cb1',
+                  boxShadow: '0 6px 20px rgba(58, 90, 177, 0.6)',
+                },
+              }}
+            >
+              Register
+            </Button>
           </div>
         </Box>
       </form>
-      <div className='mt-5 flex items-center gap-2 py-5 justify-center'>
-        <span>
-            I already have an account.
-        </span>
+      <div className="mt-5 flex items-center gap-2 py-5 justify-center">
+        <span>I already have an account.</span>
         <Button onClick={() => togglePanel()}>Sign In</Button>
       </div>
     </div>

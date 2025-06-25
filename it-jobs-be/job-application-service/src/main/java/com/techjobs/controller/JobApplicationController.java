@@ -47,10 +47,6 @@ public class JobApplicationController {
                 return ResponseEntity.badRequest().body("Job ID must be provided.");
             }
 
-            // Log input
-            System.out.println("Received job application: " + request);
-            System.out.println("User: " + user.getEmail());
-
             // Call service
             JobApplication jobApplication = jobApplicationService.applyToJob(
                     request.getApplicantId(),

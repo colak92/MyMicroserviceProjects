@@ -1,5 +1,5 @@
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
 import {
   Autocomplete,
   Button,
@@ -7,83 +7,90 @@ import {
   Rating,
   TextField,
   Typography,
-} from "@mui/material";
-import { useState, useEffect } from "react";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useDispatch, useSelector } from "react-redux";
-import dayjs from "dayjs";
+} from '@mui/material';
+import { useState, useEffect } from 'react';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useDispatch, useSelector } from 'react-redux';
+import dayjs from 'dayjs';
 import {
   fetchAllCompanies,
   fetchCompanyById,
   updateCompany,
-} from "../../ReduxToolkit/CompanySlice";
+} from '../../ReduxToolkit/CompanySlice';
+import { fetchAllFounders } from '../../ReduxToolkit/FounderSlice';
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
 
-const jobs = [
-  "FrontEnd Dev",
-  "BackEnd Dev",
-  "Full Stack",
-  "Administrator",
-  "Tester",
-];
-
 export default function EditCompany({ item, handleClose, open }) {
   const dispatch = useDispatch();
-  const company = useSelector((store) => store.company);
+  const [loading, setLoading] = useState(true);
 
+  const founders = useSelector((state) => state.founder.founders);
+  const companyDetails = useSelector((state) => state.company.companyDetails);
+
+  const [selectedFounders, setSelectedFounders] = useState([]);
   const [formData, setFormData] = useState({
-    name: "",
-    logo: "",
-    description: "",
-    email: "",
+    name: '',
+    logo: '',
+    description: '',
+    email: '',
     foundedDate: new Date().toISOString(),
-    founders: [],
-    jobs: [],
-    rate: "",
+    rate: '',
   });
 
-  const [loading, setLoading] = useState(true);
+  // 🔁 Load company and founders on open
+  useEffect(() => {
+    if (item?.id) {
+      dispatch(fetchCompanyById({ companyId: item.id }));
+    }
+
+    dispatch(fetchAllFounders());
+  }, [dispatch, item?.id]);
+
+  // 🎯 When company details are fetched
+  useEffect(() => {
+    if (companyDetails && companyDetails.id === item.id) {
+      setFormData({
+        name: companyDetails.name || '',
+        logo: companyDetails.logo || '',
+        description: companyDetails.description || '',
+        email: companyDetails.email || '',
+        foundedDate: companyDetails.foundedDate
+          ? new Date(companyDetails.foundedDate)
+          : new Date(),
+        rate: companyDetails.rate || '',
+      });
+
+      setSelectedFounders(
+        Array.isArray(companyDetails.founders) ? companyDetails.founders : []
+      );
+      setLoading(false);
+    }
+  }, [companyDetails, item.id]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleJobsChange = (event, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      jobs: value,
-    }));
-  };
-
-  const handleFoundersChange = (event, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      founders: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFoundedDateChange = (date) => {
-    setFormData((prev) => ({
-      ...prev,
-      foundedDate: date,
-    }));
+    setFormData((prev) => ({ ...prev, foundedDate: date }));
+  };
+
+  const handleFoundersChange = (event, value) => {
+    setSelectedFounders(value);
   };
 
   const formatDate = (input) => {
@@ -95,12 +102,11 @@ export default function EditCompany({ item, handleClose, open }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    console.log("New form data:", JSON.stringify(formData, null, 2));
-
     const updatedCompany = {
       id: item.id,
       updatedCompanyData: {
         ...formData,
+        founders: selectedFounders.map((f) => ({ id: f.id })),
         foundedDate: formatDate(formData.foundedDate),
       },
     };
@@ -108,42 +114,14 @@ export default function EditCompany({ item, handleClose, open }) {
     dispatch(updateCompany(updatedCompany))
       .unwrap()
       .then(() => {
-        console.log("Company updated successfully.");
         dispatch(fetchAllCompanies());
+        dispatch(fetchAllFounders());
         handleClose();
       })
-      .catch((err) => {
-        console.error("Update failed:", err);
+      .catch((error) => {
+        console.error('Update failed: ', error.message);
       });
   };
-
-  useEffect(() => {
-    if (item?.id) {
-      dispatch(fetchCompanyById({ companyId: item.id }));
-    }
-  }, [dispatch, item?.id]);
-
-  useEffect(() => {
-    if (company.companyDetails && company.companyDetails.id === item.id) {
-      setFormData({
-        name: company.companyDetails.name || "",
-        logo: company.companyDetails.logo || "",
-        description: company.companyDetails.description || "",
-        email: company.companyDetails.email || "",
-        foundedDate: company.companyDetails.foundedDate
-          ? new Date(company.companyDetails.foundedDate)
-          : new Date(),
-        founders: Array.isArray(company.companyDetails.founders)
-          ? company.companyDetails.founders
-          : [],
-        jobs: Array.isArray(company.companyDetails.jobs)
-          ? company.companyDetails.jobs
-          : [],
-        rate: company.companyDetails.rate || "",
-      });
-      setLoading(false);
-    }
-  }, [company.companyDetails, item.id]);
 
   return (
     <Modal
@@ -154,7 +132,7 @@ export default function EditCompany({ item, handleClose, open }) {
     >
       <Box sx={style}>
         {loading ? (
-          <p>Loading company data...</p>
+          <Typography>Loading company data...</Typography>
         ) : (
           <form onSubmit={handleSubmit}>
             <Grid container direction="column" spacing={2} alignItems="center">
@@ -162,35 +140,38 @@ export default function EditCompany({ item, handleClose, open }) {
                 <TextField
                   sx={{ minWidth: 300 }}
                   label="Name"
-                  fullWidth
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  fullWidth
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   sx={{ minWidth: 300 }}
                   label="Logo"
-                  fullWidth
                   name="logo"
                   value={formData.logo}
                   onChange={handleChange}
+                  fullWidth
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   sx={{ minWidth: 300 }}
                   label="Description"
-                  fullWidth
-                  multiline
-                  rows={4}
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
+                  fullWidth
+                  multiline
+                  rows={4}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   sx={{ minWidth: 300 }}
@@ -199,52 +180,39 @@ export default function EditCompany({ item, handleClose, open }) {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Enter your email..."
+                  fullWidth
                   required
-                  variant="outlined"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <Autocomplete
-                  sx={{ minWidth: 300 }}
-                  multiple
-                  id="multiple-limit-jobs"
-                  options={jobs}
-                  value={formData.jobs}
-                  onChange={handleJobsChange}
-                  getOptionLabel={(option) => option}
-                  renderInput={(params) => (
-                    <TextField label="Jobs" fullWidth {...params} />
-                  )}
-                />
-              </Grid>
+
               <Grid item xs={12}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    sx={{ minWidth: 300 }}
-                    label="Founded"
+                    label="Founded Date"
                     value={dayjs(formData.foundedDate)}
                     onChange={handleFoundedDateChange}
-                    renderInput={(params) => (
-                      <TextField {...params} fullWidth />
-                    )}
+                    slotProps={{ textField: { fullWidth: true } }}
                   />
                 </LocalizationProvider>
               </Grid>
+
               <Grid item xs={12}>
                 <Autocomplete
                   sx={{ minWidth: 300 }}
                   multiple
-                  id="multiple-limit-founders"
-                  options={jobs}
-                  value={formData.founders}
+                  options={founders}
+                  value={selectedFounders}
                   onChange={handleFoundersChange}
-                  getOptionLabel={(option) => option}
+                  getOptionLabel={(option) => option.name || ''}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
                   renderInput={(params) => (
-                    <TextField label="Founders" fullWidth {...params} />
+                    <TextField label="Founders" {...params} fullWidth />
                   )}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <Box display="flex" alignItems="center" gap={1}>
                   <Typography fontWeight="bold">Rating:</Typography>
@@ -255,14 +223,15 @@ export default function EditCompany({ item, handleClose, open }) {
                     onChange={(event, newValue) => {
                       setFormData((prev) => ({
                         ...prev,
-                        rate: newValue?.toString() || "0",
+                        rate: newValue?.toString() || '0',
                       }));
                     }}
                   />
                 </Box>
               </Grid>
+
               <Grid item xs={12}>
-                <Button fullWidth type="submit" sx={{ padding: ".9rem" }}>
+                <Button type="submit" fullWidth variant="contained">
                   Update
                 </Button>
               </Grid>

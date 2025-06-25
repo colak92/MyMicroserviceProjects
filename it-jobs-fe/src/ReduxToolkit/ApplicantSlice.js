@@ -1,109 +1,109 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { api, setAuthHeader } from "../api/api";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { api, setAuthHeader } from '../api/api';
 
 export const fetchAllApplicants = createAsyncThunk(
-  "applicant/fetchAllApplicants",
+  'applicant/fetchAllApplicants',
   async () => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
 
     try {
       const { data } = await api.get(`/api/applicants`);
-      console.log("Fetch applicants data: ", data);
+      console.log('Fetch applicants - Success');
       return data;
     } catch (error) {
-      console.log("Fetch applicants - Catch error", error);
+      console.log('Fetch applicants - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 export const fetchApplicantById = createAsyncThunk(
-  "applicant/fetchApplicantById",
+  'applicant/fetchApplicantById',
   async ({ applicantId }) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
 
     try {
       const { data } = await api.get(`/api/applicants/${applicantId}`);
-      console.log("Fetch applicant by id: ", data);
+      console.log('Fetch applicant by id - Success');
       return data;
     } catch (error) {
-      console.log("Fetch applicant by id - Catch error", error);
+      console.log('Fetch applicant by id - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 export const createApplicant = createAsyncThunk(
-  "applicant/createApplicant",
+  'applicant/createApplicant',
   async ({ applicantData }) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
 
     try {
       const { data } = await api.post(`/api/applicants`, applicantData);
-      console.log("Created applicant: ", data);
+      console.log('Created applicant - Success');
       return data;
     } catch (error) {
-      console.log("Created applicant - Catch error", error);
+      console.log('Created applicant - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 export const updateApplicant = createAsyncThunk(
-  "applicant/updateApplicant",
+  'applicant/updateApplicant',
   async ({ id, updatedApplicantData }) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
 
     try {
       const { data } = await api.put(
         `/api/applicants/${id}`,
         updatedApplicantData
       );
-      console.log("Updated applicant: ", data);
+      console.log('Updated applicant - Success');
       return data;
     } catch (error) {
-      console.log("Updated applicant - Catch error", error);
+      console.log('Updated applicant - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 export const deleteApplicant = createAsyncThunk(
-  "applicant/deleteApplicant",
+  'applicant/deleteApplicant',
   async ({ applicantId }) => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
 
     try {
       await api.delete(`/api/applicants/${applicantId}`);
-      console.log("Applicant deleted successfully");
+      console.log('Applicant deleted - Success');
       return applicantId;
     } catch (error) {
-      console.log("Applicant deleted - Catch error", error);
+      console.log('Applicant deleted - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
 );
 
 export const fetchApplicantProfile = createAsyncThunk(
-  "applicant/fetchApplicantProfile",
+  'applicant/fetchApplicantProfile',
   async () => {
-    setAuthHeader(localStorage.getItem("jwt"), api);
+    setAuthHeader(localStorage.getItem('jwt'), api);
 
     try {
       const { data } = await api.get(`/api/applicants/profile`);
-      console.log("Fetched applicant profile:", data);
+      console.log('Fetched applicant profile - Success');
       return data;
     } catch (error) {
-      console.log("fetchApplicantProfile - Catch error", error);
+      console.log('Fetched applicant profile - Error', error.message);
       throw Error(
-        error.response?.data?.error || "Failed to fetch applicant profile"
+        error.response?.data?.error || 'Failed to fetch applicant profile'
       );
     }
   }
 );
 
 const applicantSlice = createSlice({
-  name: "applicant",
+  name: 'applicant',
   initialState: {
     applicants: [],
     loading: false,

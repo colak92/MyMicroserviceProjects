@@ -1,9 +1,9 @@
-import { Typography } from "@mui/material";
-import React, { useState } from "react";
-import dayjs from "dayjs";
-import { JOB_APPLICATION_STATUS_OPTIONS } from "../../constants/jobApplicationStatus";
-import JobApplicationList from "./JobApplicationList";
-import { useSelector } from "react-redux";
+import { Typography } from '@mui/material';
+import React, { useState } from 'react';
+import dayjs from 'dayjs';
+import { JOB_APPLICATION_STATUS_OPTIONS } from '../../constants/jobApplicationStatus';
+import JobApplicationList from './JobApplicationList';
+import { useSelector } from 'react-redux';
 
 const JobApplicationCard = ({ item, disableJobApplicationList = false }) => {
   const getStatusLabel = (value) =>
@@ -33,29 +33,41 @@ const JobApplicationCard = ({ item, disableJobApplicationList = false }) => {
                 data-testid="jobApplicationStatus"
               >
                 <span
-                  style={{ color: "rgb(77, 127, 208)" }}
+                  style={{ color: 'rgb(77, 127, 208)' }}
                   className="font-semibold"
                 >
                   Status:
-                </span>{" "}
+                </span>{' '}
                 {getStatusLabel(item.status)}
               </p>
 
-              <p className='text-amber-700 text-sm' data-testid="applicantName">
-                <span style={{ color: 'rgb(77, 127, 208)' }} className="font-semibold">Applicant:</span> {applicant?.name || "Unknown"}
+              <p className="text-amber-700 text-sm" data-testid="applicantName">
+                <span
+                  style={{ color: 'rgb(77, 127, 208)' }}
+                  className="font-semibold"
+                >
+                  Applicant:
+                </span>{' '}
+                {applicant?.name || 'Unknown'}
               </p>
 
-              <p className='text-amber-700 text-sm' data-testid="jobName">
-                <span style={{ color: 'rgb(77, 127, 208)' }} className="font-semibold">Job:</span> {job?.name || "Unknown"}
+              <p className="text-amber-700 text-sm" data-testid="jobName">
+                <span
+                  style={{ color: 'rgb(77, 127, 208)' }}
+                  className="font-semibold"
+                >
+                  Job:
+                </span>{' '}
+                {job?.name || 'Unknown'}
               </p>
 
               <Typography variant="body2" className="text-amber-700">
                 <span
-                  style={{ color: "rgb(77, 127, 208)" }}
+                  style={{ color: 'rgb(77, 127, 208)' }}
                   className="font-semibold"
                 >
                   Cover Letter:
-                </span>{" "}
+                </span>{' '}
                 {item.coverLetter}
               </Typography>
 
@@ -64,12 +76,12 @@ const JobApplicationCard = ({ item, disableJobApplicationList = false }) => {
                 data-testid="jobApplicationApplied"
               >
                 <span
-                  style={{ color: "rgb(77, 127, 208)" }}
+                  style={{ color: 'rgb(77, 127, 208)' }}
                   className="font-semibold"
                 >
                   Applied:
-                </span>{" "}
-                {dayjs(item.appliedDate).format("MMMM D, YYYY")}
+                </span>{' '}
+                {dayjs(item.appliedDate).format('MMMM D, YYYY')}
               </p>
             </div>
           </div>
