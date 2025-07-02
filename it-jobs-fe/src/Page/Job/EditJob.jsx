@@ -12,7 +12,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchJobById, updateJob } from '../../ReduxToolkit/JobSlice';
+import { fetchJobById, fetchJobsByCompany, updateJob } from '../../ReduxToolkit/JobSlice';
 import { fetchAllCompanies } from '../../ReduxToolkit/CompanySlice';
 import dayjs from 'dayjs';
 import { JOB_SENIORITY_OPTIONS } from '../../constants/jobSeniority';
@@ -47,6 +47,7 @@ export default function EditJob({ item, handleClose, open }) {
   const [selectedNecessarySkills, setSelectedNecessarySkills] = useState([]);
   const [selectedAdditionalSkills, setSelectedAdditionalSkills] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const formatDate = (date) => (date ? dayjs(date).format('YYYY-MM-DDTHH:mm:ss') : null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -133,8 +134,6 @@ export default function EditJob({ item, handleClose, open }) {
     }));
   };
 
-  const formatDate = (date) => (date ? date.toISOString() : null);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -147,7 +146,9 @@ export default function EditJob({ item, handleClose, open }) {
     };
 
     try {
-      await dispatch(updateJob({ id: item.id, updatedJobData })).unwrap();
+      const updatedJob = await dispatch(updateJob({ id: item.id, updatedJobData })).unwrap();
+      await dispatch(fetchJobsByCompany(updatedJob.companyId)).unwrap();
+
       handleClose();
     } catch (error) {
       console.error('Failed to update job: ', error.message);

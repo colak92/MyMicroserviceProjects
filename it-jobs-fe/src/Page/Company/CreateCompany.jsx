@@ -19,6 +19,7 @@ import {
   fetchAllCompanies,
 } from '../../ReduxToolkit/CompanySlice';
 import { fetchAllFounders } from '../../ReduxToolkit/FounderSlice';
+import { fetchJobsByCompany } from '../../ReduxToolkit/JobSlice';
 
 const style = {
   position: 'absolute',
@@ -38,6 +39,7 @@ export default function CreateCompany({ open, handleClose }) {
   const founders = useSelector((state) => state.founder.founders || []);
   const [loading, setLoading] = useState(false);
   const [selectedFounders, setSelectedFounders] = useState([]);
+  const user = useSelector((state) => state.auth.user);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -91,11 +93,13 @@ export default function CreateCompany({ open, handleClose }) {
         ? formData.foundedDate.toISOString()
         : null,
       founders: selectedFounders.map((f) => ({ id: f.id })),
+      userId: user?.id,
     };
 
     try {
-      await dispatch(createCompany({ companyData: submitData })).unwrap();
+      const createdCompany = await dispatch(createCompany({ companyData: submitData })).unwrap();
       await dispatch(fetchAllCompanies()).unwrap();
+      await dispatch(fetchJobsByCompany(createdCompany.id)).unwrap();
       handleClose();
       resetForm();
     } catch (error) {

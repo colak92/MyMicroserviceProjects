@@ -36,8 +36,8 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public JobDTO createJob(JobDTO jobDTO, String requestedRole) throws Exception {
-        if (!"ROLE_ADMIN".equals(requestedRole)) {
-            throw new Exception("Only admin can create a job");
+        if (!"ROLE_ADMIN".equals(requestedRole) && !"ROLE_COMPANY".equals(requestedRole)) {
+            throw new Exception("Only admin and company profile can create a company");
         }
 
         Job job = JobMapper.toEntity(jobDTO);

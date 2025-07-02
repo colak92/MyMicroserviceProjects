@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { Box, Modal, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllJobApplications } from '../../ReduxToolkit/JobApplicationSlice';
+import { fetchJobApplicationsByCompany } from '../../ReduxToolkit/JobApplicationSlice';
+import { fetchAllApplicants } from '../../ReduxToolkit/ApplicantSlice';
+import { fetchAllJobs } from '../../ReduxToolkit/JobSlice';
 import JobApplicationCard from './JobApplicationCard';
 
 const style = {
@@ -18,20 +20,23 @@ const style = {
   overflowY: 'auto',
 };
 
-const JobApplicationList = ({ open, handleClose }) => {
+const JobApplicationList = ({ open, handleClose, companyId }) => {
   const dispatch = useDispatch();
 
-  const jobApplications = useSelector(
-    (state) => state.jobApplication.jobApplications
-  );
-  const loading = useSelector((state) => state.job.loading);
-  const error = useSelector((state) => state.job.error);
+  const jobApplications = useSelector((state) => state.jobApplication.jobApplications);
+  const jobs = useSelector((state) => state.job.jobs); // from your job slice
+  const applicants = useSelector((state) => state.applicant.applicants); // from applicant slice
+
+  const loading = useSelector((state) => state.jobApplication.loading);
+  const error = useSelector((state) => state.jobApplication.error);
 
   useEffect(() => {
-    if (open) {
-      dispatch(fetchAllJobApplications());
+    if (open && companyId) {
+      dispatch(fetchJobApplicationsByCompany(companyId));
+      dispatch(fetchAllApplicants());
+      dispatch(fetchAllJobs());
     }
-  }, [dispatch, open]);
+  }, [dispatch, open, companyId]);
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -44,17 +49,24 @@ const JobApplicationList = ({ open, handleClose }) => {
         {error && <Typography color="error">{error}</Typography>}
 
         {!loading && jobApplications.length === 0 && (
-          <Typography>No jobs applications.</Typography>
+          <Typography>No job applications found.</Typography>
         )}
 
-        {!loading &&
-          jobApplications.map((jobApplication) => (
-            <JobApplicationCard
-              key={jobApplication.id}
-              item={jobApplication}
-              disableJobApplicationList={true}
-            />
-          ))}
+        {!loading && jobApplications.length > 0 && (
+          jobApplications.map((jobApplication) => {
+            const job = jobs.find(j => j.id === jobApplication.jobId);
+            const applicant = applicants.find(a => a.id === jobApplication.applicantId);
+
+            return (
+              <JobApplicationCard
+                key={jobApplication.id}
+                item={jobApplication}
+                job={job}
+                applicant={applicant}
+              />
+            );
+          })
+        )}
 
         <Box mt={2} display="flex" justifyContent="flex-end">
           <button onClick={handleClose}>Close</button>

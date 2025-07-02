@@ -38,8 +38,6 @@ public class Company {
 
     private String email;
 
-    private LocalDateTime createdAt;
-
     private LocalDate foundedDate;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
@@ -50,4 +48,25 @@ public class Company {
     @Min(0)
     @Max(5)
     private Double rate;
+
+    private Long userId;
+
+    private Boolean createdByAdmin = false;
+
+    private LocalDateTime createdDate;
+
+    private LocalDateTime updateDate;
+
+    private String lastModifiedBy;
+
+    @PrePersist
+    public void onCreate() {
+        this.createdDate = LocalDateTime.now();
+        this.updateDate = this.createdDate;
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        this.updateDate = LocalDateTime.now();
+    }
 }

@@ -17,4 +17,7 @@ public interface JobApplicationService {
     List<JobApplication> getAllJobApplications();
 
     JobApplication getJobApplicationById(Long id);
+
+    List<JobApplication> getJobApplicationsByCompany(Long companyId, String jwt);
+
 }

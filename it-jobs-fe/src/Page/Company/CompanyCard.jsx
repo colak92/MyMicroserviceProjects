@@ -1,54 +1,39 @@
 import { IconButton, Menu, MenuItem, Rating, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CompanyList from './CompanyList';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   deleteCompany,
   fetchAllCompanies,
 } from '../../ReduxToolkit/CompanySlice';
-import UserList from '../User/UserList';
 import dayjs from 'dayjs';
 import EditCompany from './EditCompany';
 import JobList from '../Job/JobList';
 import { COMPANY_STATUS_OPTIONS } from '../../constants/companyStatus';
+import { fetchJobsByCompany } from '../../ReduxToolkit/JobSlice';
 
 const CompanyCard = ({ item, disableCompanyList = false }) => {
-  const getStatusLabel = (value) =>
-    COMPANY_STATUS_OPTIONS.find((option) => option.value === value)?.label ||
-    value;
+  const getStatusLabel = (value) => COMPANY_STATUS_OPTIONS.find((option) => option.value === value)?.label || value;
   const dispatch = useDispatch();
-  const location = useLocation();
-  const navigate = useNavigate();
   const auth = useSelector((store) => store.auth);
 
-  // Select all jobs and filter those belonging to this company
-  const jobs = useSelector((state) => state.job.jobs || []);
-  const companyJobs = jobs.filter((job) => job.companyId === item.id);
+  const companyJobsById = useSelector((state) => state.job.companyJobsById);
+  const companyJobs = companyJobsById[item.id] || [];
 
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
 
-  const [openUserList, setOpenUserList] = useState(false);
   const [openAssignedJobList, setOpenAssignedJobList] = useState(false);
   const [openCompanyList, setOpenCompanyList] = useState(false);
   const [openUpdateCompany, setOpenUpdateCompany] = useState(false);
 
   const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-  const handleCloseUserList = () => setOpenUserList(false);
   const handleCloseAssignedJobList = () => setOpenAssignedJobList(false);
   const handleCloseCompanyList = () => setOpenCompanyList(false);
   const handleCloseUpdateCompany = () => setOpenUpdateCompany(false);
-
-  const handleOpenUserList = () => {
-    const updatedParams = new URLSearchParams(location.search);
-    updatedParams.set('companyId', item.id);
-    navigate(`${location.pathname}?${updatedParams.toString()}`);
-    setOpenUserList(true);
-    handleMenuClose();
-  };
 
   const handleOpenAssignedJobList = () => {
     setOpenAssignedJobList(true);
@@ -65,6 +50,12 @@ const CompanyCard = ({ item, disableCompanyList = false }) => {
     dispatch(fetchAllCompanies());
     handleMenuClose();
   };
+
+  useEffect(() => {
+  if (!companyJobsById[item.id]) {
+    dispatch(fetchJobsByCompany(item.id));
+  }
+}, [dispatch, item.id]);
 
   return (
     <div>
@@ -177,7 +168,6 @@ const CompanyCard = ({ item, disableCompanyList = false }) => {
             ) : (
               <>
                 <MenuItem onClick={handleOpenAssignedJobList}>Jobs</MenuItem>
-                <MenuItem onClick={handleOpenUserList}>User List</MenuItem>
               </>
             )}
           </Menu>
@@ -189,7 +179,6 @@ const CompanyCard = ({ item, disableCompanyList = false }) => {
         handleClose={handleCloseAssignedJobList}
         companyId={item.id}
       />
-      <UserList open={openUserList} handleClose={handleCloseUserList} />
       <EditCompany
         item={item}
         open={openUpdateCompany}

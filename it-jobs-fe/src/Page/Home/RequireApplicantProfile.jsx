@@ -6,21 +6,19 @@ import CompleteApplicantProfile from '../Applicant/CompleteApplicantProfile';
 const RequireApplicantProfile = ({ children }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  const applicantDetails = useSelector(
-    (state) => state.applicant.applicantDetails
-  );
   const [openCompleteProfile, setOpenCompleteProfile] = useState(false);
 
+  // TODO Logic
   useEffect(() => {
     const checkProfile = async () => {
       if (user?.role === 'ROLE_APPLICANT') {
         try {
           const profile = await dispatch(fetchApplicantProfile()).unwrap();
           if (!profile?.resumeUrl) {
-            console.log('⚠️ Resume missing. Forcing profile completion modal.');
+            console.log('⚠️ Missing applicant resume. Forcing profile completion modal.');
             setOpenCompleteProfile(true);
           } else {
-            console.log('✅ Resume exists. No need for modal.');
+            console.log('✅ Applicant profile exists.');
             setOpenCompleteProfile(false);
           }
         } catch (error) {
@@ -36,12 +34,6 @@ const RequireApplicantProfile = ({ children }) => {
       checkProfile();
     }
   }, [user, dispatch]);
-
-  useEffect(() => {
-    console.log('🔍 User: ');
-    console.log('🔍 Applicant details from Redux: ');
-    console.log('🔍 Modal open state: ');
-  }, [user, applicantDetails, openCompleteProfile]);
 
   // Prevent page scroll while modal is open
   useEffect(() => {

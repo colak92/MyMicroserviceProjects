@@ -51,6 +51,21 @@ export const applyToJob = createAsyncThunk(
   }
 );
 
+export const fetchJobApplicationsByCompany = createAsyncThunk(
+  'job/fetchJobApplicationsByCompany',
+  async (companyId) => {
+    setAuthHeader(localStorage.getItem('jwt'), api);
+    try {
+      const { data } = await api.get(`/api/job-applications/company/${companyId}`);
+      console.log('Get job applications for company - Success');
+      return data;
+    } catch (error) {
+      console.log('Get job applications for company - Error', error.message);
+      throw Error(error.response.data.error);
+    }
+  }
+);
+
 const jobApplicationSlice = createSlice({
   name: 'jobApplication',
   initialState: {
@@ -59,7 +74,14 @@ const jobApplicationSlice = createSlice({
     jobApplicationDetails: null,
     jobApplications: [],
   },
-  reducers: {},
+  reducers: {
+    clearJobApplicationState: (state) => {
+      state.jobApplicationDetails = null;
+      state.jobApplications = [];
+      state.error = null;
+      state.loading = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllJobApplications.pending, (state) => {
@@ -74,7 +96,6 @@ const jobApplicationSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-
       .addCase(fetchJobApplicationById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -87,7 +108,6 @@ const jobApplicationSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-
       .addCase(applyToJob.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -99,8 +119,21 @@ const jobApplicationSlice = createSlice({
       .addCase(applyToJob.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(fetchJobApplicationsByCompany.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+      })
+      .addCase(fetchJobApplicationsByCompany.fulfilled, (state, action) => {
+        state.loading = false;
+        state.jobApplications = action.payload;
+      })
+      .addCase(fetchJobApplicationsByCompany.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });
 
+export const { clearJobApplicationState } = jobApplicationSlice.actions;
 export default jobApplicationSlice.reducer;

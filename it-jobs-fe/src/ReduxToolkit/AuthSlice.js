@@ -1,5 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { api, BASE_URL, setAuthHeader } from '../api/api';
+import { clearApplicantState } from './ApplicantSlice';
+import { clearCompanyProfile, clearCompanyState } from './CompanySlice';
+import { clearJobState } from './JobSlice';
+import { clearJobApplicationState } from './JobApplicationSlice';
+
 import axios from 'axios';
 
 export const login = createAsyncThunk('auth/login', async (userData) => {
@@ -34,6 +39,16 @@ export const logout = createAsyncThunk('auth/logout', async (data) => {
     throw Error(error.response.data.error);
   }
 });
+
+export const logoutAndClearAllState = () => async (dispatch) => {
+  await dispatch(logout());
+
+  dispatch(clearApplicantState());
+  dispatch(clearCompanyState());
+  dispatch(clearCompanyProfile());
+  dispatch(clearJobState());
+  dispatch(clearJobApplicationState());
+};
 
 export const getUserProfile = createAsyncThunk(
   'auth/getUserProfile',

@@ -2,6 +2,7 @@ package com.techjobs.service;
 
 import com.techjobs.dto.CompanyDTO;
 import com.techjobs.dto.FounderDTO;
+import com.techjobs.dto.UserDTO;
 import com.techjobs.mapper.CompanyMapper;
 import com.techjobs.model.Company;
 import com.techjobs.model.CompanyStatus;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,13 +37,15 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     @Override
     public CompanyDTO createCompany(CompanyDTO companyDTO, String requestedRole) throws Exception {
-        if (!"ROLE_ADMIN".equals(requestedRole)) {
-            throw new Exception("Only admin can create a company");
+        if (!"ROLE_ADMIN".equals(requestedRole) && !"ROLE_COMPANY".equals(requestedRole)) {
+            throw new Exception("Only admin and company profile can create a company");
         }
 
         Company company = CompanyMapper.toEntity(companyDTO);
         company.setStatus(CompanyStatus.ACTIVE);
-        company.setCreatedAt(LocalDateTime.now());
+        company.setUserId(companyDTO.getUserId());
+        company.setCreatedDate(LocalDateTime.now());
+        company.setLastModifiedBy(requestedRole);
 
         // Save company first so it has an ID
         Company savedCompany = companyRepository.save(company);
@@ -49,6 +53,8 @@ public class CompanyServiceImpl implements CompanyService {
         // Attach founders properly using repository (no detached entities)
         List<Founder> attachedFounders = attachFounders(companyDTO.getFounders(), savedCompany);
         savedCompany.setFounders(attachedFounders);
+
+        company.setCreatedByAdmin("ROLE_ADMIN".equals(requestedRole));
 
         // Save again to update founders
         companyRepository.save(savedCompany);
@@ -73,7 +79,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Transactional
     @Override
-    public CompanyDTO updateCompany(Long id, CompanyDTO updatedCompanyDTO, Long userId) throws Exception {
+    public CompanyDTO updateCompany(Long id, CompanyDTO updatedCompanyDTO, Long userId, String currentUserRole) throws Exception {
         Company existingCompany = companyRepository.findById(id)
                 .orElseThrow(() -> new Exception("Company not found"));
 
@@ -148,6 +154,13 @@ public class CompanyServiceImpl implements CompanyService {
             existingCompany.setRate(updatedCompanyDTO.getRate());
         }
 
+        if (updatedCompanyDTO.getUserId() != null){
+            existingCompany.setUserId(updatedCompanyDTO.getUserId());
+        }
+
+        existingCompany.setLastModifiedBy(currentUserRole);
+        existingCompany.setUpdateDate(LocalDateTime.now());
+
         Company savedCompany = companyRepository.save(existingCompany);
 
         return CompanyMapper.toDTO(savedCompany);
@@ -166,6 +179,23 @@ public class CompanyServiceImpl implements CompanyService {
         return founderRepository.findByCompanyIsNull();
     }
 
+    @Override
+    public Optional<Company> findByUserId(Long userId) {
+        return companyRepository.findByUserId(userId);
+    }
+
+    @Transactional
+    public void claimUnassignedCompanyIfExists(UserDTO user) {
+        Optional<Company> companyOpt = companyRepository.findByEmailAndUserIdIsNull(user.getEmail());
+
+        if (companyOpt.isPresent()) {
+            Company company = companyOpt.get();
+            company.setUserId(user.getId());
+            company.setCreatedByAdmin(false);
+            companyRepository.save(company);
+        }
+    }
+
     private List<Founder> attachFounders(List<FounderDTO> founderDTOs, Company company) {
         return founderDTOs.stream().map(dto -> {
             Founder founder = founderRepository.findById(dto.getId())
@@ -174,4 +204,5 @@ public class CompanyServiceImpl implements CompanyService {
             return founder;
         }).collect(Collectors.toList());
     }
+
 }

@@ -1,18 +1,26 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  Modal,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createApplicant,
   updateApplicant,
   fetchApplicantProfile,
 } from '../../ReduxToolkit/ApplicantSlice';
-import { Box, Modal } from '@mui/material';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 500,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   outline: 'none',
@@ -27,19 +35,29 @@ const CompleteApplicantProfile = ({ open, onClose }) => {
     (state) => state.applicant.applicantDetails
   );
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [resumeUrl, setResumeUrl] = useState('');
-  const [skills, setSkills] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    resumeUrl: '',
+    skills: '',
+  });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setName(applicantDetails?.name || '');
-    setEmail(applicantDetails?.email || '');
-    setResumeUrl(applicantDetails?.resumeUrl || '');
-    setSkills(applicantDetails?.skills || '');
-  }, [applicantDetails]);
+    setFormData({
+      name: applicantDetails?.name || user?.fullName || '',
+      email: applicantDetails?.email || user?.email || '',
+      resumeUrl: applicantDetails?.resumeUrl || '',
+      skills: applicantDetails?.skills || '',
+    });
+  }, [applicantDetails, user]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,10 +67,7 @@ const CompleteApplicantProfile = ({ open, onClose }) => {
     try {
       const applicantData = {
         userId: user.id,
-        name,
-        email,
-        resumeUrl,
-        skills,
+        ...formData,
       };
 
       if (applicantDetails?.id) {
@@ -66,7 +81,7 @@ const CompleteApplicantProfile = ({ open, onClose }) => {
         await dispatch(createApplicant({ applicantData })).unwrap();
       }
 
-      await dispatch(fetchApplicantProfile());
+      dispatch(fetchApplicantProfile());
       onClose();
     } catch (error) {
       console.error('Error saving profile: ', error.message);
@@ -76,90 +91,101 @@ const CompleteApplicantProfile = ({ open, onClose }) => {
     }
   };
 
+  const handleModalClose = () => {
+    onClose();
+    setError(null);
+  };
+
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={handleModalClose}
       aria-labelledby="complete-profile-modal"
-      aria-describedby="complete-profile-form"
+      aria-describedby="modal-to-complete-applicant-profile"
     >
       <Box sx={style}>
-        <div className="max-w-lg mx-auto p-6 rounded shadow-md">
-          <h2 id="complete-profile-modal" className="text-2xl mb-4">
-            Complete Your Applicant Profile
-          </h2>
-          <form onSubmit={handleSubmit} id="complete-profile-form">
-            <div className="mb-4">
-              <label htmlFor="name" className="block mb-1 font-semibold">
-                Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                className="w-full border rounded p-2 bg-gray-500"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+        <Typography variant="h6" gutterBottom>
+          Complete Your Applicant Profile
+        </Typography>
+
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={2} direction="column">
+            <Grid item>
+              <TextField
+                fullWidth
                 required
+                name="name"
+                label="Full Name"
+                value={formData.name}
+                InputProps={{ readOnly: true }}
               />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="email" className="block mb-1 font-semibold">
-                Email
-              </label>
-              <input
-                id="email"
+            </Grid>
+
+            <Grid item>
+              <TextField
+                fullWidth
+                required
                 type="email"
-                className="w-full border rounded p-2 bg-gray-500"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                name="email"
+                label="Email"
+                value={formData.email}
+                InputProps={{ readOnly: true }}
               />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="resumeUrl" className="block mb-1 font-semibold">
-                Resume URL
-              </label>
-              <input
-                id="resumeUrl"
-                type="text"
-                className="w-full border rounded p-2 bg-gray-500"
-                value={resumeUrl}
-                onChange={(e) => setResumeUrl(e.target.value)}
+            </Grid>
+
+            <Grid item>
+              <TextField
+                fullWidth
                 required
+                name="resumeUrl"
+                label="Resume URL"
+                value={formData.resumeUrl}
+                onChange={handleChange}
               />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="skills" className="block mb-1 font-semibold">
-                Skills (comma separated)
-              </label>
-              <input
-                id="skills"
-                type="text"
-                className="w-full border rounded p-2 bg-gray-500"
-                value={skills}
-                onChange={(e) => setSkills(e.target.value)}
+            </Grid>
+
+            <Grid item>
+              <TextField
+                fullWidth
                 required
+                name="skills"
+                label="Skills (comma separated)"
+                value={formData.skills}
+                onChange={handleChange}
               />
-            </div>
-            {error && <p className="mb-4 text-red-600">{error}</p>}
-            <div className="flex justify-between items-center">
-              <button
+            </Grid>
+
+            {error && (
+              <Grid item>
+                <Typography color="error" fontSize="0.875rem">
+                  {error}
+                </Typography>
+              </Grid>
+            )}
+
+            <Grid item container justifyContent="space-between">
+              <Button
                 type="submit"
+                variant="contained"
+                color="primary"
                 disabled={loading}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
               >
-                {loading ? 'Saving...' : 'Save Profile'}
-              </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="text-gray-400 hover:text-red-500 text-sm ml-4"
+                {loading ? (
+                  <CircularProgress size={22} color="inherit" />
+                ) : (
+                  'Save Profile'
+                )}
+              </Button>
+              <Button
+                variant="text"
+                color="secondary"
+                onClick={handleModalClose}
               >
                 Close without saving
-              </button>
-            </div>
-          </form>
-        </div>
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Box>
     </Modal>
   );

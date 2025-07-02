@@ -20,7 +20,7 @@ export const fetchJobsByCompany = createAsyncThunk(
     try {
       const { data } = await api.get(`/api/jobs/company/${companyId}`);
       console.log('Get jobs for company - Success');
-      return data;
+      return { companyId, jobs: data };
     } catch (error) {
       console.log('Get jobs for company - Error', error.message);
       throw Error(error.response.data.error);
@@ -95,9 +95,17 @@ const jobSlice = createSlice({
     loading: false,
     error: null,
     jobDetails: null,
-    companyJobs: [],
+    companyJobsById: {},
   },
-  reducers: {},
+  reducers: {
+    clearJobState: (state) => {
+      state.jobDetails = null;
+      state.jobs = [];
+      state.companyJobsById = {};
+      state.error = null;
+      state.loading = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllJobs.pending, (state) => {
@@ -112,22 +120,26 @@ const jobSlice = createSlice({
         state.error = action.error.message;
         state.loading = false;
       })
+
       .addCase(fetchJobsByCompany.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchJobsByCompany.fulfilled, (state, action) => {
+        const { companyId, jobs } = action.payload;
         state.loading = false;
-        state.companyJobs = action.payload;
+        state.companyJobsById[companyId] = jobs;
       })
       .addCase(fetchJobsByCompany.rejected, (state, action) => {
         state.error = action.error.message;
         state.loading = false;
       })
+
       .addCase(fetchJobById.fulfilled, (state, action) => {
         state.loading = false;
         state.jobDetails = action.payload;
       })
+
       .addCase(createJob.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -140,6 +152,7 @@ const jobSlice = createSlice({
         state.error = action.error.message;
         state.loading = false;
       })
+
       .addCase(updateJob.fulfilled, (state, action) => {
         const updatedJob = action.payload;
         state.loading = false;
@@ -147,6 +160,7 @@ const jobSlice = createSlice({
           job.id === updatedJob.id ? { ...job, ...updatedJob } : job
         );
       })
+
       .addCase(deleteJob.fulfilled, (state, action) => {
         state.loading = false;
         state.jobs = state.jobs.filter((job) => job.id !== action.payload);
@@ -154,4 +168,5 @@ const jobSlice = createSlice({
   },
 });
 
+export const { clearJobState } = jobSlice.actions;
 export default jobSlice.reducer;

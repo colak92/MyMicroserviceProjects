@@ -20,8 +20,12 @@ public class CompanyDTO {
     private String logo;
     private String description;
     private String email;
-    private LocalDateTime createdAt;
     private LocalDate foundedDate;
     private List<FounderDTO> founders = new ArrayList<>();
     private Double rate;
+    private Long userId;
+    private Boolean createdByAdmin;
+    private LocalDateTime createdDate;
+    private LocalDateTime updateDate;
+    private String lastModifiedBy;
 }

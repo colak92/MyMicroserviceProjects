@@ -4,6 +4,7 @@ import { Avatar, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { getUserList } from '../../ReduxToolkit/AuthSlice';
+import { USER_ROLE_OPTIONS } from '../../constants/userRole';
 
 const style = {
   position: 'absolute',
@@ -20,39 +21,57 @@ const style = {
 export default function UserList({ handleClose, open }) {
   const dispatch = useDispatch();
   const auth = useSelector((store) => store.auth);
+  const token = localStorage.getItem('jwt');
+  
+  const getRoleLabel = (roleValue) => {
+  const roleOption = USER_ROLE_OPTIONS.find((option) => option.value === roleValue);
+    return roleOption ? roleOption.label : roleValue;
+  };
+
+  const getRoleIcon = (roleValue) => {
+  const roleOption = USER_ROLE_OPTIONS.find((option) => option.value === roleValue);
+    return roleOption ? roleOption.icon : null;
+  };
 
   useEffect(() => {
-    dispatch(getUserList(localStorage.getItem('jwt')));
-  }, [dispatch]);
+    if (open) {
+      dispatch(getUserList(token));
+    }
+  }, [dispatch, open, token]);
 
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          {auth.users.map((item) => (
-            <>
-              <div className="flex items-center justify-between w-full">
-                <div>
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar src="https://www.citypng.com/public/uploads/preview/hd-man-user-illustration-icon-transparent-png-701751694974843ybexneueic.png" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={item.fullName}
-                      secondary={`@${item.fullName.split(' ').join('_').toLowerCase()}`}
-                    />
-                  </ListItem>
-                </div>
-              </div>
-            </>
-          ))}
-        </Box>
-      </Modal>
-    </div>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        {auth.users && auth.users.length > 0 ? (
+          auth.users.map((user) => (
+            <ListItem key={user.id} divider>
+              <ListItemAvatar>
+              <Avatar sx={{ bgcolor: '#4d7fd0' }}>
+                {getRoleIcon(user.role)}
+              </Avatar>
+            </ListItemAvatar>
+              <ListItemText
+                primary={user.fullName}
+                secondary={
+                  <>
+                    <div>@{user.fullName.split(' ').join('_').toLowerCase()}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', fontSize: '0.9rem', color: '#666' }}>
+                      <span>{getRoleLabel(user.role)}</span>
+                    </div>
+                  </>
+                }
+              />
+            </ListItem>
+          ))
+        ) : (
+          <div>No users found.</div>
+        )}
+      </Box>
+    </Modal>
   );
 }

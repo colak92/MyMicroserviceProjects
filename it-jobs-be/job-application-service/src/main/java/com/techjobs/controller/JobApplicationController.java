@@ -115,4 +115,14 @@ public class JobApplicationController {
         List<JobApplication> applications = jobApplicationService.getJobApplicationsByJob(jobId);
         return ResponseEntity.ok(applications);
     }
+
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<List<JobApplication>> getApplicationsByCompany(
+            @PathVariable Long companyId,
+            @RequestHeader("Authorization") String jwt
+    ) {
+        List<JobApplication> applications = jobApplicationService.getJobApplicationsByCompany(companyId, jwt);
+        return ResponseEntity.ok(applications);
+    }
+
 }

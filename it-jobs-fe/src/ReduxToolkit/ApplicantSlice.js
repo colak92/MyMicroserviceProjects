@@ -109,10 +109,19 @@ const applicantSlice = createSlice({
     loading: false,
     error: null,
     applicantDetails: null,
+    isFetched: false,
   },
-  reducers: {},
+  reducers: {
+    clearApplicantState: (state) => {
+      state.applicantDetails = null;
+      state.applicants = [];
+      state.error = null;
+      state.loading = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
+      // fetchAllApplicants
       .addCase(fetchAllApplicants.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -125,10 +134,14 @@ const applicantSlice = createSlice({
         state.error = action.error.message;
         state.loading = false;
       })
+
+      // fetchApplicantById
       .addCase(fetchApplicantById.fulfilled, (state, action) => {
         state.loading = false;
         state.applicantDetails = action.payload;
       })
+
+      // createApplicant
       .addCase(createApplicant.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -141,6 +154,8 @@ const applicantSlice = createSlice({
         state.error = action.error.message;
         state.loading = false;
       })
+
+      // updateApplicant
       .addCase(updateApplicant.fulfilled, (state, action) => {
         const updatedApplicant = action.payload;
         state.loading = false;
@@ -150,12 +165,16 @@ const applicantSlice = createSlice({
             : applicant
         );
       })
+
+      // deleteApplicant
       .addCase(deleteApplicant.fulfilled, (state, action) => {
         state.loading = false;
         state.applicants = state.applicants.filter(
           (applicant) => applicant.id !== action.payload
         );
       })
+
+      // fetchApplicantProfile
       .addCase(fetchApplicantProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -163,12 +182,15 @@ const applicantSlice = createSlice({
       .addCase(fetchApplicantProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.applicantDetails = action.payload;
+        state.isFetched = true;
       })
       .addCase(fetchApplicantProfile.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload?.message || action.error.message;
+        state.isFetched = true;
       });
   },
 });
 
+export const { clearApplicantState } = applicantSlice.actions;
 export default applicantSlice.reducer;

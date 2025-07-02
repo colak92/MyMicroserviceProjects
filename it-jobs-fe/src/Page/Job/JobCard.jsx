@@ -3,7 +3,7 @@ import JobList from './JobList';
 import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditJob from './EditJob';
-import { deleteJob, fetchAllJobs } from '../../ReduxToolkit/JobSlice';
+import { deleteJob, fetchAllJobs, fetchJobsByCompany } from '../../ReduxToolkit/JobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import { JOB_SENIORITY_OPTIONS } from '../../constants/jobSeniority';
@@ -51,7 +51,7 @@ const JobCard = ({ item, disableJobList = false }) => {
         }
       } catch (error) {
         console.error('❌ Error fetching applicant profile', error.message);
-        setOpenCompleteProfile(true); // likely 404 or other missing data
+        setOpenCompleteProfile(true);
       }
     }
   };
@@ -62,14 +62,15 @@ const JobCard = ({ item, disableJobList = false }) => {
   };
 
   const handleOpenDeleteJob = async () => {
-    try {
-      await dispatch(deleteJob({ jobId: item.id })).unwrap();
-      dispatch(fetchAllJobs());
-    } catch (error) {
-      console.error('Failed to delete job: ', error.message);
-    }
-    handleMenuClose();
-  };
+  try {
+    await dispatch(deleteJob({ jobId: item.id })).unwrap();
+    dispatch(fetchAllJobs());
+    await dispatch(fetchJobsByCompany(item.companyId)).unwrap();
+  } catch (error) {
+    console.error('Failed to delete job: ', error.message);
+  }
+  handleMenuClose();
+};
 
   return (
     <div>

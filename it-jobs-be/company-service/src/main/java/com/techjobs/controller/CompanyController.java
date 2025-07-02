@@ -2,6 +2,8 @@ package com.techjobs.controller;
 
 import com.techjobs.dto.CompanyDTO;
 import com.techjobs.dto.UserDTO;
+import com.techjobs.mapper.CompanyMapper;
+import com.techjobs.model.Company;
 import com.techjobs.model.Founder;
 import com.techjobs.service.CompanyService;
 import com.techjobs.service.UserClient;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/companies")
@@ -21,6 +24,29 @@ public class CompanyController {
     public CompanyController(UserClient userClient, CompanyService companyService) {
         this.userClient = userClient;
         this.companyService = companyService;
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getCurrentCompanyProfile(@RequestHeader("Authorization") String jwt) {
+        UserDTO user = userClient.getUserProfile(jwt);
+
+        if (!"ROLE_COMPANY".equals(user.getRole())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Not a company");
+        }
+
+        // Try to auto-claim any matching unclaimed company
+        companyService.claimUnassignedCompanyIfExists(user);
+
+        Optional<Company> company = companyService.findByUserId(user.getId());
+
+        if (company.isPresent()) {
+            CompanyDTO companyDTO = CompanyMapper.toDTO(company.get());
+            return ResponseEntity.ok(companyDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Company profile not found");
+        }
+
     }
 
     @PostMapping
@@ -59,7 +85,7 @@ public class CompanyController {
                                                     @RequestHeader("Authorization") String jwt) throws Exception {
 
         UserDTO user = userClient.getUserProfile(jwt);
-        CompanyDTO updatedCompany = companyService.updateCompany(id, companyDTO, user.getId());
+        CompanyDTO updatedCompany = companyService.updateCompany(id, companyDTO, user.getId(), user.getRole());
 
         return new ResponseEntity<>(updatedCompany, HttpStatus.OK);
     }

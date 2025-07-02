@@ -12,11 +12,12 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useDispatch, useSelector } from 'react-redux';
-import { createJob } from '../../ReduxToolkit/JobSlice';
+import { createJob, fetchJobsByCompany } from '../../ReduxToolkit/JobSlice';
 import { fetchAllCompanies } from '../../ReduxToolkit/CompanySlice';
 import { fetchAllNecessarySkills } from '../../ReduxToolkit/NecessarySkillSlice';
 import { fetchAllAdditionalSkills } from '../../ReduxToolkit/AdditionalSkillSlice';
 import { JOB_SENIORITY_OPTIONS } from '../../constants/jobSeniority';
+import dayjs from 'dayjs';
 
 const style = {
   position: 'absolute',
@@ -46,7 +47,7 @@ export default function CreateJob({ handleClose, open }) {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [selectedNecessarySkills, setSelectedNecessarySkills] = useState([]);
   const [selectedAdditionalSkills, setSelectedAdditionalSkills] = useState([]);
-  const formatDate = (date) => (date ? date.toISOString() : null);
+  const formatDate = (date) => (date ? dayjs(date).format('YYYY-MM-DDTHH:mm:ss') : null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -102,7 +103,8 @@ export default function CreateJob({ handleClose, open }) {
     };
 
     try {
-      await dispatch(createJob({ jobData: submitData }));
+      const createdJob = await dispatch(createJob({ jobData: submitData })).unwrap();
+      await dispatch(fetchJobsByCompany(createdJob.companyId)).unwrap();
       handleClose();
     } catch (error) {
       console.error('Error creating job: ', error.message);

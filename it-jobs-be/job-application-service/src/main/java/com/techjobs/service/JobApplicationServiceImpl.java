@@ -1,5 +1,6 @@
 package com.techjobs.service;
 
+import com.techjobs.dto.JobServiceDTO;
 import com.techjobs.exception.ResourceNotFoundException;
 import com.techjobs.model.JobApplication;
 import com.techjobs.model.JobApplicationStatus;
@@ -88,4 +89,16 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     public JobApplication getJobApplicationById(Long id) {
         return jobApplicationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Application not found"));
     }
+
+    @Override
+    public List<JobApplication> getJobApplicationsByCompany(Long companyId, String jwt) {
+        if (companyId == null) {
+            return jobApplicationRepository.findAll();
+        }
+
+        List<JobServiceDTO> jobs = jobClient.getJobsByCompany(companyId, jwt);
+        List<Long> jobIds = jobs.stream().map(JobServiceDTO::getId).toList();
+        return jobApplicationRepository.findByJobIdIn(jobIds);
+    }
+
 }

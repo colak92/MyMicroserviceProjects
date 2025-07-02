@@ -27,10 +27,14 @@ public class CompanyMapper {
                 company.getLogo(),
                 company.getDescription(),
                 company.getEmail(),
-                company.getCreatedAt(),
                 company.getFoundedDate(),
                 founderDTOs,
-                company.getRate()
+                company.getRate(),
+                company.getUserId(),
+                company.getCreatedByAdmin(),
+                company.getCreatedDate(),
+                company.getUpdateDate(),
+                company.getLastModifiedBy()
         );
     }
 
@@ -43,6 +47,11 @@ public class CompanyMapper {
         company.setEmail(dto.getEmail());
         company.setFoundedDate(dto.getFoundedDate());
         company.setRate(dto.getRate());
+        company.setUserId(dto.getUserId());
+        company.setCreatedByAdmin(dto.getCreatedByAdmin());
+        company.setCreatedDate(dto.getCreatedDate());
+        company.setUpdateDate(dto.getUpdateDate());
+        company.setLastModifiedBy(dto.getLastModifiedBy());
         return company;
     }
 
