@@ -45,9 +45,7 @@ const RequireCompanyProfile = ({ children }) => {
   return (
     <>
       {children}
-      <CompleteCompanyProfile
-        open={openCompleteProfile}
-        onClose={() => setOpenCompleteProfile(false)}
+      <CompleteCompanyProfile open={openCompleteProfile} onClose={() => setOpenCompleteProfile(false)}
       />
     </>
   );

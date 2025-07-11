@@ -8,7 +8,7 @@ export const fetchAllJobs = createAsyncThunk('job/fetchAllJobs', async () => {
     console.log('Fetch jobs - Success');
     return data;
   } catch (error) {
-    console.log('Fetch jobs - Error', error.message);
+    console.error('Fetch jobs - Error', error.message);
     throw Error(error.response.data.error);
   }
 });
@@ -22,7 +22,7 @@ export const fetchJobsByCompany = createAsyncThunk(
       console.log('Get jobs for company - Success');
       return { companyId, jobs: data };
     } catch (error) {
-      console.log('Get jobs for company - Error', error.message);
+      console.error('Get jobs for company - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
@@ -37,7 +37,7 @@ export const fetchJobById = createAsyncThunk(
       console.log('Fetch job by id - Success');
       return data;
     } catch (error) {
-      console.log('Fetch job by id - Error', error.message);
+      console.error('Fetch job by id - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
@@ -52,7 +52,7 @@ export const createJob = createAsyncThunk(
       console.log('Created job - Success');
       return data;
     } catch (error) {
-      console.log('Created job - Error', error.message);
+      console.error('Created job - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
@@ -67,7 +67,7 @@ export const updateJob = createAsyncThunk(
       console.log('Updated job - Success');
       return data;
     } catch (error) {
-      console.log('Updated job - Error', error.message);
+      console.error('Updated job - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
@@ -82,7 +82,7 @@ export const deleteJob = createAsyncThunk(
       console.log('Job deleted - Success');
       return jobId;
     } catch (error) {
-      console.log('Job deleted - Error', error.message);
+      console.error('Job deleted - Error', error.message);
       throw Error(error.response.data.error);
     }
   }

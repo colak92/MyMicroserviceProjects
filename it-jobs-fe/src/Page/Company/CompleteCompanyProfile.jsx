@@ -188,13 +188,16 @@ export default function CompleteCompanyProfile({ open, onClose }) {
           />
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
+            
+          
             <DatePicker
+              fullWidth
               label="Founded Date"
               value={formData.foundedDate}
               onChange={(newValue) =>
                 setFormData((prev) => ({ ...prev, foundedDate: newValue }))
               }
-              renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+              slotProps={{ textField: { fullWidth: true } }}
             />
           </LocalizationProvider>
 

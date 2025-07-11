@@ -11,7 +11,7 @@ export const fetchAllCompanies = createAsyncThunk(
       console.log('Fetch companies - Success');
       return data;
     } catch (error) {
-      console.log('Fetch companies - Error', error.message);
+      console.error('Fetch companies - Error', error.message);
       throw Error(error.response?.data?.error || error.message);
     }
   }
@@ -27,7 +27,7 @@ export const fetchCompanyById = createAsyncThunk(
       console.log('Fetch company by id - Success');
       return data;
     } catch (error) {
-      console.log('Fetch company by id - Error', error.message);
+      console.error('Fetch company by id - Error', error.message);
       throw Error(error.response?.data?.error || error.message);
     }
   }
@@ -43,7 +43,7 @@ export const createCompany = createAsyncThunk(
       console.log('Created company - Success');
       return data;
     } catch (error) {
-      console.log('Created company - Error', error.message);
+      console.error('Created company - Error', error.message);
       throw Error(error.response?.data?.error || error.message);
     }
   }
@@ -59,7 +59,7 @@ export const updateCompany = createAsyncThunk(
       console.log('Updated company - Success');
       return data;
     } catch (error) {
-      console.log('Updated company - Error', error.message);
+      console.error('Updated company - Error', error.message);
       throw Error(error.response?.data?.error || error.message);
     }
   }
@@ -75,7 +75,7 @@ export const deleteCompany = createAsyncThunk(
       console.log('Company deleted - Success');
       return companyId;
     } catch (error) {
-      console.log('Company deleted - Error', error.message);
+      console.error('Company deleted - Error', error.message);
       throw Error(error.response?.data?.error || error.message);
     }
   }
@@ -91,7 +91,7 @@ export const fetchCompanyProfile = createAsyncThunk(
       console.log('Fetched company profile - Success');
       return data;
     } catch (error) {
-      console.log('Fetched company profile - Error', error.message);
+      console.error('Fetched company profile - Error', error.message);
       throw Error(error.response?.data?.error || 'Failed to fetch company profile');
     }
   }

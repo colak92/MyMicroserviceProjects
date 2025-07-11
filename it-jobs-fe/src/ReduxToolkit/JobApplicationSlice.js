@@ -60,7 +60,7 @@ export const fetchJobApplicationsByCompany = createAsyncThunk(
       console.log('Get job applications for company - Success');
       return data;
     } catch (error) {
-      console.log('Get job applications for company - Error', error.message);
+      console.error('Get job applications for company - Error', error.message);
       throw Error(error.response.data.error);
     }
   }

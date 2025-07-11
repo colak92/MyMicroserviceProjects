@@ -4,8 +4,8 @@ services:
   mysql:
     image: mysql:8.0
     container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ???
+    env_file:
+      - secrets.env
     ports:
       - "3307:3306"
     volumes:
@@ -14,10 +14,51 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p???" ]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$MYSQL_ROOT_PASSWORD"]
       interval: 10s
       timeout: 5s
       retries: 10
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat,conf,isro
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper_data:/bitnami/zookeeper
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "echo ruok | nc localhost 2181 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  kafka:
+    image: bitnami/kafka:3.5.1
+    container_name: kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    ports:
+      - "29092:29092"
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "kafka-topics.sh", "--bootstrap-server", "kafka:29092", "--list" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   eureka-server:
     build:
@@ -28,6 +69,11 @@ services:
       - "8070:8070"
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8070/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   user-service:
     build:
@@ -36,21 +82,27 @@ services:
     container_name: user-service
     ports:
       - "9001:9001"
+    env_file:
+      - secrets.env
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=120
+      - WAIT_TIMEOUT=160
     depends_on:
-      - mysql
-      - eureka-server
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - app-network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9001/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - app-network
 
   company-service:
     build:
@@ -59,21 +111,25 @@ services:
     container_name: company-service
     ports:
       - "9002:9002"
+    env_file:
+      - secrets.env
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=120
+      - WAIT_TIMEOUT=160
     depends_on:
-      - mysql
-      - eureka-server
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - app-network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9002/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - app-network
 
   job-service:
     build:
@@ -82,21 +138,25 @@ services:
     container_name: job-service
     ports:
       - "9003:9003"
+    env_file:
+      - secrets.env
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=120
+      - WAIT_TIMEOUT=160
     depends_on:
-      - mysql
-      - eureka-server
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - app-network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9003/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - app-network
 
   applicant-service:
     build:
@@ -105,21 +165,27 @@ services:
     container_name: applicant-service
     ports:
       - "9004:9004"
+    env_file:
+      - secrets.env
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=120
+      - WAIT_TIMEOUT=160
     depends_on:
-      - mysql
-      - eureka-server
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - app-network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9004/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - app-network
 
   job-application-service:
     build:
@@ -128,21 +194,25 @@ services:
     container_name: job-application-service
     ports:
       - "9005:9005"
+    env_file:
+      - secrets.env
     environment:
       - MYSQL_HOST=mysql
       - WAIT_FOR_HOST=mysql
       - WAIT_FOR_PORT=3306
-      - WAIT_TIMEOUT=120
+      - WAIT_TIMEOUT=160
     depends_on:
-      - mysql
-      - eureka-server
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - app-network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9005/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - app-network
 
   gateway-server:
     build:
@@ -154,15 +224,21 @@ services:
     environment:
       - WAIT_FOR_HOST=eureka-server
       - WAIT_FOR_PORT=8070
-      - WAIT_TIMEOUT=300
+      - WAIT_TIMEOUT=360
     depends_on:
       - eureka-server
       - user-service
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/actuator/health" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mysql-data:
+  zookeeper_data:
 
 networks:
   app-network:

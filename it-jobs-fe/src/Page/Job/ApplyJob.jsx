@@ -66,8 +66,7 @@ const ApplyJob = ({ item, handleClose, open }) => {
       alert('Applied successfully!');
       handleModalClose();
     } catch (error) {
-      const backendMsg =
-        error?.response?.data || error?.message || 'Unexpected error';
+      const backendMsg = error?.response?.data || error?.message || 'Unexpected error';
       console.error('Failed to apply for job: ', backendMsg.message);
       alert('Failed to apply: ' + backendMsg);
     }

@@ -1,11 +1,13 @@
 package com.techjobs.controller;
 
 import com.techjobs.config.JwtProvider;
+import com.techjobs.dto.AuthResponse;
+import com.techjobs.dto.LoginRequest;
+import com.techjobs.kafka.event.UserCreatedEvent;
+import com.techjobs.kafka.producer.KafkaUserProducerService;
 import com.techjobs.model.User;
 import com.techjobs.model.UserRole;
 import com.techjobs.repository.UserRepository;
-import com.techjobs.dto.LoginRequest;
-import com.techjobs.dto.AuthResponse;
 import com.techjobs.service.CustomUserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +30,17 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final CustomUserServiceImpl userDetailsService;
 
+    private final KafkaUserProducerService kafkaUserProducerService;
+
     public AuthController(UserRepository userRepository,
-                   PasswordEncoder passwordEncoder,
-                   CustomUserServiceImpl userDetailsService){
+                          PasswordEncoder passwordEncoder,
+                          CustomUserServiceImpl userDetailsService,
+                          KafkaUserProducerService kafkaUserProducerService
+    ){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
+        this.kafkaUserProducerService = kafkaUserProducerService;
     }
 
     @PostMapping("/signup")
@@ -57,6 +64,16 @@ public class AuthController {
         createdUser.setRole(role);
         createdUser.setPassword(passwordEncoder.encode(password));
         userRepository.save(createdUser);
+
+        // Prepare event to send to Kafka
+        UserCreatedEvent event = new UserCreatedEvent();
+        event.setId(createdUser.getId());
+        event.setEmail(createdUser.getEmail());
+        event.setFullName(createdUser.getFullName());
+        event.setRole(createdUser.getRole().name());
+
+        // Publish to Kafka topic "user.created"
+        kafkaUserProducerService.sendMessage("user.created", event);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);

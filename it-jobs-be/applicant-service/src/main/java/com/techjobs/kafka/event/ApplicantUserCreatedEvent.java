@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserCreatedEvent {
+public class ApplicantUserCreatedEvent {
     private Long id;
     private String email;
     private String role;

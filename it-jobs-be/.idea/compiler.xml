@@ -21,8 +21,8 @@
         <module name="job-service" />
         <module name="job-application-service" />
         <module name="auth-api" />
-        <module name="company-service" />
         <module name="user-service" />
+        <module name="company-service" />
         <module name="applicant-service" />
       </profile>
     </annotationProcessing>

@@ -155,9 +155,15 @@ const JobCard = ({ item, disableJobList = false }) => {
             open={openMenu}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={handleOpenApplyJob}>Apply</MenuItem>
-            <MenuItem onClick={handleOpenUpdateJob}>Edit</MenuItem>
-            <MenuItem onClick={handleOpenDeleteJob}>Delete</MenuItem>
+            {user?.role === 'ROLE_APPLICANT' && (
+              <MenuItem onClick={handleOpenApplyJob}>Apply</MenuItem>
+            )}
+            {(user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_COMPANY') && (
+              <>
+                <MenuItem onClick={handleOpenUpdateJob}>Edit</MenuItem>
+                <MenuItem onClick={handleOpenDeleteJob}>Delete</MenuItem>
+              </>
+            )}
           </Menu>
         </div>
       </div>

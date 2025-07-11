@@ -50,7 +50,7 @@ const RequireApplicantProfile = ({ children }) => {
   return (
     <>
       {children}
-      <CompleteApplicantProfile open={openCompleteProfile} />
+      <CompleteApplicantProfile open={openCompleteProfile} onClose={() => setOpenCompleteProfile(false)}/>
     </>
   );
 };

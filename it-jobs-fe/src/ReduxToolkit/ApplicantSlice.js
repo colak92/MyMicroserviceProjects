@@ -11,7 +11,7 @@ export const fetchAllApplicants = createAsyncThunk(
       console.log('Fetch applicants - Success');
       return data;
     } catch (error) {
-      console.log('Fetch applicants - Error', error.message);
+      console.error('Fetch applicants - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
@@ -27,7 +27,7 @@ export const fetchApplicantById = createAsyncThunk(
       console.log('Fetch applicant by id - Success');
       return data;
     } catch (error) {
-      console.log('Fetch applicant by id - Error', error.message);
+      console.error('Fetch applicant by id - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
@@ -43,7 +43,7 @@ export const createApplicant = createAsyncThunk(
       console.log('Created applicant - Success');
       return data;
     } catch (error) {
-      console.log('Created applicant - Error', error.message);
+      console.error('Created applicant - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
@@ -62,7 +62,7 @@ export const updateApplicant = createAsyncThunk(
       console.log('Updated applicant - Success');
       return data;
     } catch (error) {
-      console.log('Updated applicant - Error', error.message);
+      console.error('Updated applicant - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
@@ -78,7 +78,7 @@ export const deleteApplicant = createAsyncThunk(
       console.log('Applicant deleted - Success');
       return applicantId;
     } catch (error) {
-      console.log('Applicant deleted - Error', error.message);
+      console.error('Applicant deleted - Error', error.message);
       throw Error(error.response.data.error);
     }
   }
@@ -94,7 +94,7 @@ export const fetchApplicantProfile = createAsyncThunk(
       console.log('Fetched applicant profile - Success');
       return data;
     } catch (error) {
-      console.log('Fetched applicant profile - Error', error.message);
+      console.error('Fetched applicant profile - Error', error.message);
       throw Error(
         error.response?.data?.error || 'Failed to fetch applicant profile'
       );

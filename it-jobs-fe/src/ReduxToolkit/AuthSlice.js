@@ -13,7 +13,7 @@ export const login = createAsyncThunk('auth/login', async (userData) => {
     localStorage.setItem('jwt', data.jwt);
     return data;
   } catch (error) {
-    console.log('Login - Error', error.message);
+    console.error('Login - Error', error.message);
     throw Error(error.response.data.error);
   }
 });
@@ -24,7 +24,7 @@ export const register = createAsyncThunk('auth/register', async (userData) => {
     localStorage.setItem('jwt', data.jwt);
     return data;
   } catch (error) {
-    console.log('Register - Error', error.message);
+    console.error('Register - Error', error.message);
     throw Error(error.response.data.error);
   }
 });
@@ -35,7 +35,7 @@ export const logout = createAsyncThunk('auth/logout', async (data) => {
     console.log('Logout - Success');
     return data;
   } catch (error) {
-    console.log('Logout - Error', error.message);
+    console.error('Logout - Error', error.message);
     throw Error(error.response.data.error);
   }
 });
@@ -60,7 +60,7 @@ export const getUserProfile = createAsyncThunk(
       console.log('Profile - Success');
       return data;
     } catch (error) {
-      console.log('Profile - Error', error.message);
+      console.error('Profile - Error', error.message);
       throw new Error(
         error?.response?.data?.error || 'Something went wrong during login'
       );
@@ -73,9 +73,10 @@ export const getUserList = createAsyncThunk('auth/getUserList', async (jwt) => {
 
   try {
     const { data } = await api.get(`/api/users`);
+    console.log('Get all users - Success');
     return data;
   } catch (error) {
-    console.log('Get all users - Error', error.message);
+    console.error('Get all users - Error', error.message);
     throw Error(error.response.data.error);
   }
 });
